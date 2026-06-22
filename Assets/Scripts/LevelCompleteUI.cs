@@ -15,6 +15,7 @@ public class LevelCompleteUI : MonoBehaviour
     [SerializeField] private Button playAgainButton;
     [SerializeField] private Button nextLevelButton;
     [SerializeField] private Button mainMenuButton;
+    [SerializeField] private TextMeshProUGUI nextLevelHintText;
 
     private CanvasGroup panelCanvasGroup;
     private bool hideWithCanvasGroup;
@@ -112,17 +113,45 @@ public class LevelCompleteUI : MonoBehaviour
 
         int collected = GameManager.Instance.CollectedStars;
         int max = GameManager.Instance.MaxStarsPerLevel;
-        summaryText.text = "Bölüm Tamamlandı!\nYıldız Sayısı: " + collected + "/" + max;
+        string summary = "Bölüm Tamamlandı!\nYıldız Sayısı: " + collected + "/" + max;
+
+        if (GameManager.Instance.HasNextLevel() && !GameManager.Instance.IsNextLevelUnlocked())
+        {
+            summary += "\n\nSonraki bölüm için " + SaveManager.StarsRequiredToUnlockNextLevel + " yıldız gerekli.";
+        }
+
+        summaryText.text = summary;
     }
 
     private void UpdateNextLevelButton()
     {
-        if (nextLevelButton == null || GameManager.Instance == null)
+        if (GameManager.Instance == null)
         {
             return;
         }
 
-        nextLevelButton.interactable = GameManager.Instance.HasNextLevel();
+        bool canLoadNextLevel = GameManager.Instance.CanLoadNextLevel();
+
+        if (nextLevelButton != null)
+        {
+            nextLevelButton.interactable = canLoadNextLevel;
+        }
+
+        if (nextLevelHintText != null)
+        {
+            if (!GameManager.Instance.HasNextLevel())
+            {
+                nextLevelHintText.text = string.Empty;
+            }
+            else if (canLoadNextLevel)
+            {
+                nextLevelHintText.text = string.Empty;
+            }
+            else
+            {
+                nextLevelHintText.text = SaveManager.StarsRequiredToUnlockNextLevel + " yıldız ile açılır";
+            }
+        }
     }
 
     public void OnPlayAgainClicked()

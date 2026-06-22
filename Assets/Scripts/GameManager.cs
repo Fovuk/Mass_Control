@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     {
         SetState(GameState.Playing);
         NotifyStarsChanged();
+        ValidateLevelStarCount();
     }
 
     void OnDestroy()
@@ -108,6 +109,27 @@ public class GameManager : MonoBehaviour
         return SceneManager.GetActiveScene().buildIndex + 1 < SceneManager.sceneCountInBuildSettings;
     }
 
+    public bool IsNextLevelUnlocked()
+    {
+        if (!HasNextLevel())
+        {
+            return false;
+        }
+
+        if (SaveManager.Instance == null)
+        {
+            return CollectedStars >= maxStarsPerLevel;
+        }
+
+        int nextLevelBuildIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        return SaveManager.Instance.IsLevelUnlocked(nextLevelBuildIndex);
+    }
+
+    public bool CanLoadNextLevel()
+    {
+        return HasNextLevel() && IsNextLevelUnlocked();
+    }
+
     public void RestartCurrentLevel()
     {
         Time.timeScale = 1f;
@@ -119,6 +141,12 @@ public class GameManager : MonoBehaviour
         if (!HasNextLevel())
         {
             Debug.LogWarning("[GameManager] Yuklenecek sonraki bolum yok.");
+            return;
+        }
+
+        if (!IsNextLevelUnlocked())
+        {
+            Debug.LogWarning("[GameManager] Sonraki bolum kilitli. Once 3 yildiz toplamalisin.");
             return;
         }
 
@@ -142,5 +170,14 @@ public class GameManager : MonoBehaviour
     private void NotifyStarsChanged()
     {
         OnStarsChanged?.Invoke(CollectedStars, maxStarsPerLevel);
+    }
+
+    private void ValidateLevelStarCount()
+    {
+        int starCount = GameObject.FindGameObjectsWithTag("Star").Length;
+        if (starCount != maxStarsPerLevel)
+        {
+            Debug.LogWarning($"[GameManager] Bu bolumde {starCount} yildiz var, {maxStarsPerLevel} olmali.");
+        }
     }
 }

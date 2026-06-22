@@ -7,6 +7,8 @@ public class SaveManager : MonoBehaviour
 {
     public static SaveManager Instance { get; private set; }
 
+    public const int StarsRequiredToUnlockNextLevel = 3;
+
     private const string HighestUnlockedLevelKey = "HighestUnlockedLevel";
     private const string LevelStarsKeyPrefix = "LevelStars_";
 
@@ -48,14 +50,14 @@ public class SaveManager : MonoBehaviour
         return PlayerPrefs.GetInt(HighestUnlockedLevelKey, 0);
     }
 
-    public bool IsLevelUnlocked(int levelIndex)
+    public bool IsLevelUnlocked(int levelIndex, int starsRequired = StarsRequiredToUnlockNextLevel)
     {
-        if (levelIndex <= 0)
+        if (levelIndex <= 1)
         {
             return true;
         }
 
-        return levelIndex <= GetHighestUnlockedLevel();
+        return GetLevelStars(levelIndex - 1) >= starsRequired;
     }
 
     public void SaveLevelProgress(int levelIndex, int starsCollected)
@@ -76,7 +78,7 @@ public class SaveManager : MonoBehaviour
         }
 
         int nextLevelIndex = levelIndex + 1;
-        if (nextLevelIndex > GetHighestUnlockedLevel())
+        if (starsCollected >= StarsRequiredToUnlockNextLevel && nextLevelIndex > GetHighestUnlockedLevel())
         {
             PlayerPrefs.SetInt(HighestUnlockedLevelKey, nextLevelIndex);
             changed = true;
