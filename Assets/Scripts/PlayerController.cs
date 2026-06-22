@@ -1,7 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
-using TMPro; // TextMeshPro kullanıyorsanız bunu ekleyin. Düz Text ise 'using UnityEngine.UI;' yazın.
 
 public class PlayerController : MonoBehaviour
 {
@@ -23,10 +21,6 @@ public class PlayerController : MonoBehaviour
     public Vector3 bigScale = new Vector3(2f, 2f, 2f);
     public float bigMass = 4f;
 
-    [Header("Skor / UI Ayarları")]
-    public TextMeshProUGUI starText; // Arayüzdeki yazı objesini buraya bağlayacağız
-    private int collectedStars = 0;   // Toplanan yıldız sayısı
-
     private Rigidbody2D rb;
     private BoxCollider2D boxCollider;
 
@@ -35,9 +29,6 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         currentMoveSpeed = baseMoveSpeed;
-        
-        // Oyun başında arayüzü güncelle
-        UpdateStarUI();
     }
 
     void Update()
@@ -47,11 +38,6 @@ public class PlayerController : MonoBehaviour
         if (isGrounded)
         {
             canDoubleJump = true;
-        }
-
-        if (transform.position.y < -10f)
-        {
-            DieAndRestart();
         }
     }
 
@@ -63,7 +49,7 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputValue value)
     {
         Vector2 moveVector = value.Get<Vector2>();
-        horizontalInput = moveVector.x; 
+        horizontalInput = moveVector.x;
     }
 
     public void OnJump(InputValue value)
@@ -86,53 +72,25 @@ public class PlayerController : MonoBehaviour
     {
         if (value.isPressed)
         {
-            if (!isBig)
-            {
-                transform.localScale = bigScale;
-                rb.mass = bigMass;
-                currentMoveSpeed = baseMoveSpeed * 0.6f;
-                isBig = true;
-            }
-            else
-            {
-                transform.localScale = smallScale;
-                rb.mass = smallMass;
-                currentMoveSpeed = baseMoveSpeed;
-                isBig = false;
-            }
+            ToggleMorph();
         }
     }
 
-    // ÇARPIŞMA KONTROLLERİ
-    private void OnTriggerEnter2D(Collider2D other)
+    public void ToggleMorph()
     {
-        // 💀 Tuzak Kontrolü
-        if (other.CompareTag("Trap"))
+        if (!isBig)
         {
-            DieAndRestart();
+            transform.localScale = bigScale;
+            rb.mass = bigMass;
+            currentMoveSpeed = baseMoveSpeed * 0.6f;
+            isBig = true;
         }
-        
-        // 🌟 Yıldız Kontrolü (Yeni Eklenen Alan)
-        if (other.CompareTag("Star"))
+        else
         {
-            collectedStars++;       // Skoru 1 artır
-            UpdateStarUI();         // Arayüzü güncelle
-            Destroy(other.gameObject); // Toplanan yıldızı sahneden sil
-        }
-    }
-
-    private void DieAndRestart()
-    {
-        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadScene(currentSceneIndex);
-    }
-
-    // Arayüz yazısını güncelleyen fonksiyon (Yeni Eklenen Alan)
-    private void UpdateStarUI()
-    {
-        if (starText != null)
-        {
-            starText.text = "Yildiz: " + collectedStars;
+            transform.localScale = smallScale;
+            rb.mass = smallMass;
+            currentMoveSpeed = baseMoveSpeed;
+            isBig = false;
         }
     }
 }
