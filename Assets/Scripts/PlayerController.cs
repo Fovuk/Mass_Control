@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     public Vector3 smallScale = new Vector3(1f, 1f, 1f);
     public float smallMass = 1f;
     public Vector3 bigScale = new Vector3(2f, 2f, 2f);
-    public float bigMass = 4f;
+    public float bigMass = 999f;
 
     public bool IsBigForm => isBig;
 
