@@ -140,11 +140,13 @@ public class PlayerController : MonoBehaviour
             if (isGrounded)
             {
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+                SfxManager.Instance?.PlayJump();
             }
             else if (canDoubleJump && !isBig)
             {
                 rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce * 0.9f);
                 canDoubleJump = false;
+                SfxManager.Instance?.PlayJump();
             }
         }
     }

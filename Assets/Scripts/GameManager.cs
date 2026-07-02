@@ -29,6 +29,15 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
+        EnsureSfxManager();
+    }
+
+    private void EnsureSfxManager()
+    {
+        if (GetComponent<SfxManager>() == null)
+        {
+            gameObject.AddComponent<SfxManager>();
+        }
     }
 
     void Start()
@@ -67,6 +76,7 @@ public class GameManager : MonoBehaviour
         }
 
         CollectedStars++;
+        SfxManager.Instance?.PlayStarCollect();
         Destroy(star);
         NotifyStarsChanged();
     }
@@ -79,7 +89,15 @@ public class GameManager : MonoBehaviour
         }
 
         SetState(GameState.Dead);
-        DieAndRestart();
+
+        if (SfxManager.Instance != null)
+        {
+            SfxManager.Instance.PlayDeath(DieAndRestart);
+        }
+        else
+        {
+            DieAndRestart();
+        }
     }
 
     public void CompleteLevel()
@@ -96,6 +114,7 @@ public class GameManager : MonoBehaviour
         }
 
         SetState(GameState.LevelComplete);
+        SfxManager.Instance?.PlayLevelComplete();
         Time.timeScale = 0f;
 
         int levelIndex = SceneManager.GetActiveScene().buildIndex;

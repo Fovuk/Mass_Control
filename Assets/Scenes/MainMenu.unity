@@ -973,6 +973,9 @@ MonoBehaviour:
   - button: {fileID: 16682479}
     sceneBuildIndex: 5
     starCountText: {fileID: 0}
+  - button: {fileID: 1366714990}
+    sceneBuildIndex: 6
+    starCountText: {fileID: 0}
   starsRequiredToUnlock: 3
 --- !u!4 &606667435
 Transform:
@@ -1251,8 +1254,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -16.693, y: 0}
-  m_SizeDelta: {x: 1299.025, y: 404.914}
+  m_AnchoredPosition: {x: 0, y: -120}
+  m_SizeDelta: {x: 1200, y: 580}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &788512489
 MonoBehaviour:
@@ -1267,14 +1270,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 8645894043717093507, guid: e5a63d3272ff4284fbee2c968e3af57d, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2419,8 +2422,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Mass Control
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 0bfb1f34031e05b4b99aceac64b99e36, type: 2}
+  m_sharedMaterial: {fileID: 8292986130934440167, guid: 0bfb1f34031e05b4b99aceac64b99e36, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
