@@ -1,8 +1,8 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+[ExecuteAlways]
 public class LevelSelectController : MonoBehaviour
 {
     [System.Serializable]
@@ -10,7 +10,6 @@ public class LevelSelectController : MonoBehaviour
     {
         public Button button;
         public int sceneBuildIndex = 1;
-        public TextMeshProUGUI starCountText;
     }
 
     [Header("Bölüm Butonları")]
@@ -21,22 +20,39 @@ public class LevelSelectController : MonoBehaviour
 
     void Awake()
     {
+        if (!Application.isPlaying)
+        {
+            return;
+        }
+
         EnsureSaveManager();
     }
 
     void OnEnable()
     {
+        EnsureStarDisplays();
+        RefreshLevelButtons();
+
+        if (!Application.isPlaying)
+        {
+            return;
+        }
+
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.OnProgressSaved += HandleProgressSaved;
         }
 
         BindButtonListeners();
-        RefreshLevelButtons();
     }
 
     void OnDisable()
     {
+        if (!Application.isPlaying)
+        {
+            return;
+        }
+
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.OnProgressSaved -= HandleProgressSaved;
@@ -94,9 +110,31 @@ public class LevelSelectController : MonoBehaviour
         RefreshLevelButtons();
     }
 
+    private void EnsureStarDisplays()
+    {
+        if (levelButtons == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < levelButtons.Length; i++)
+        {
+            Button button = levelButtons[i]?.button;
+            if (button == null)
+            {
+                continue;
+            }
+
+            if (button.GetComponent<LevelStarDisplay>() == null)
+            {
+                button.gameObject.AddComponent<LevelStarDisplay>();
+            }
+        }
+    }
+
     private void RefreshLevelButtons()
     {
-        if (levelButtons == null || SaveManager.Instance == null)
+        if (levelButtons == null)
         {
             return;
         }
@@ -109,15 +147,29 @@ public class LevelSelectController : MonoBehaviour
                 continue;
             }
 
+            LevelStarDisplay starDisplay = entry.button.GetComponent<LevelStarDisplay>();
+            if (starDisplay == null)
+            {
+                continue;
+            }
+
+            if (!Application.isPlaying)
+            {
+                starDisplay.SetStars(0);
+                continue;
+            }
+
+            if (SaveManager.Instance == null)
+            {
+                continue;
+            }
+
             int sceneIndex = entry.sceneBuildIndex;
             bool isUnlocked = SaveManager.Instance.IsLevelUnlocked(sceneIndex, starsRequiredToUnlock);
             entry.button.interactable = isUnlocked;
 
-            if (entry.starCountText != null)
-            {
-                int stars = SaveManager.Instance.GetLevelStars(sceneIndex);
-                entry.starCountText.text = isUnlocked ? stars + "/" + starsRequiredToUnlock : "Kilitli";
-            }
+            int stars = isUnlocked ? SaveManager.Instance.GetLevelStars(sceneIndex) : 0;
+            starDisplay.SetStars(stars);
         }
     }
 

@@ -2744,7 +2744,7 @@ Transform:
   m_GameObject: {fileID: 870029960}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 2, y: 1.3, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -76881,7 +76881,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14e06a2fb7f097d4fa39c55301c11e31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameUI
-  starText: {fileID: 377041338}
+  emptyStarSprite: {fileID: -7700239110961326441, guid: dd09eb103a771f74eb8c47259cf9644c, type: 3}
+  filledStarSprite: {fileID: 4815476061570213978, guid: e747d33f114143a448b44b35ce460db6, type: 3}
+  starSize: 48
+  starSpacing: 10
 --- !u!114 &1062219230
 MonoBehaviour:
   m_ObjectHideFlags: 0

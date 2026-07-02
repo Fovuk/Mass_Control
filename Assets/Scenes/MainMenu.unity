@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 16682481}
   - component: {fileID: 16682480}
   - component: {fileID: 16682479}
+  - component: {fileID: 16682482}
   m_Layer: 5
   m_Name: Button (4)
   m_TagString: Untagged
@@ -223,7 +224,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: -5518990023937178466, guid: 3d8cc8dcd10411b4dac6a55be0fbca75, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -240,6 +241,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 16682477}
   m_CullTransparentMesh: 1
+--- !u!114 &16682482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 16682477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe9a985d73863dc429564d1a35654c86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelStarDisplay
+  maxStars: 3
+  starSize: 26
+  starSpacing: 6
+  verticalOffset: -18
 --- !u!1 &69575891
 GameObject:
   m_ObjectHideFlags: 0
@@ -272,10 +289,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1891684448}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -3}
+  m_SizeDelta: {x: 0, y: -6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &69575893
 MonoBehaviour:
@@ -389,6 +406,7 @@ GameObject:
   - component: {fileID: 165705150}
   - component: {fileID: 165705149}
   - component: {fileID: 165705148}
+  - component: {fileID: 165705151}
   m_Layer: 5
   m_Name: Button (3)
   m_TagString: Untagged
@@ -481,7 +499,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: -5518990023937178466, guid: 3d8cc8dcd10411b4dac6a55be0fbca75, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -498,6 +516,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 165705146}
   m_CullTransparentMesh: 1
+--- !u!114 &165705151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165705146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe9a985d73863dc429564d1a35654c86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelStarDisplay
+  maxStars: 3
+  starSize: 26
+  starSpacing: 6
+  verticalOffset: -18
 --- !u!1 &168052135
 GameObject:
   m_ObjectHideFlags: 0
@@ -557,8 +591,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 6850352397346096737, guid: 62b11dcf878423644a5a71bb6064b2d2, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -607,10 +641,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1366714989}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -3}
+  m_SizeDelta: {x: 0, y: -6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &269112641
 MonoBehaviour:
@@ -960,22 +994,16 @@ MonoBehaviour:
   levelButtons:
   - button: {fileID: 1063009575}
     sceneBuildIndex: 1
-    starCountText: {fileID: 0}
   - button: {fileID: 1614966170}
     sceneBuildIndex: 2
-    starCountText: {fileID: 0}
   - button: {fileID: 1891684449}
     sceneBuildIndex: 3
-    starCountText: {fileID: 0}
   - button: {fileID: 165705148}
     sceneBuildIndex: 4
-    starCountText: {fileID: 0}
   - button: {fileID: 16682479}
     sceneBuildIndex: 5
-    starCountText: {fileID: 0}
   - button: {fileID: 1366714990}
     sceneBuildIndex: 6
-    starCountText: {fileID: 0}
   starsRequiredToUnlock: 3
 --- !u!4 &606667435
 Transform:
@@ -1024,10 +1052,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 165705147}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -3}
+  m_SizeDelta: {x: 0, y: -6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &618119435
 MonoBehaviour:
@@ -1434,6 +1462,7 @@ GameObject:
   - component: {fileID: 1063009577}
   - component: {fileID: 1063009576}
   - component: {fileID: 1063009575}
+  - component: {fileID: 1063009578}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -1526,7 +1555,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: -5518990023937178466, guid: 3d8cc8dcd10411b4dac6a55be0fbca75, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1543,6 +1572,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1063009573}
   m_CullTransparentMesh: 1
+--- !u!114 &1063009578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1063009573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe9a985d73863dc429564d1a35654c86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelStarDisplay
+  maxStars: 3
+  starSize: 26
+  starSpacing: 6
+  verticalOffset: -18
 --- !u!1 &1231576703
 GameObject:
   m_ObjectHideFlags: 0
@@ -1575,10 +1620,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1063009574}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -3}
+  m_SizeDelta: {x: 0, y: -6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1231576705
 MonoBehaviour:
@@ -1692,6 +1737,7 @@ GameObject:
   - component: {fileID: 1366714992}
   - component: {fileID: 1366714991}
   - component: {fileID: 1366714990}
+  - component: {fileID: 1366714993}
   m_Layer: 5
   m_Name: Button (5)
   m_TagString: Untagged
@@ -1784,7 +1830,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: -5518990023937178466, guid: 3d8cc8dcd10411b4dac6a55be0fbca75, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1801,6 +1847,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1366714988}
   m_CullTransparentMesh: 1
+--- !u!114 &1366714993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1366714988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe9a985d73863dc429564d1a35654c86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelStarDisplay
+  maxStars: 3
+  starSize: 26
+  starSpacing: 6
+  verticalOffset: -18
 --- !u!1 &1581936717
 GameObject:
   m_ObjectHideFlags: 0
@@ -1833,10 +1895,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 16682478}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -3}
+  m_SizeDelta: {x: 0, y: -6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1581936719
 MonoBehaviour:
@@ -1950,6 +2012,7 @@ GameObject:
   - component: {fileID: 1614966172}
   - component: {fileID: 1614966171}
   - component: {fileID: 1614966170}
+  - component: {fileID: 1614966173}
   m_Layer: 5
   m_Name: Button (1)
   m_TagString: Untagged
@@ -2042,7 +2105,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: -5518990023937178466, guid: 3d8cc8dcd10411b4dac6a55be0fbca75, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2059,6 +2122,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1614966168}
   m_CullTransparentMesh: 1
+--- !u!114 &1614966173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1614966168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe9a985d73863dc429564d1a35654c86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelStarDisplay
+  maxStars: 3
+  starSize: 26
+  starSpacing: 6
+  verticalOffset: -18
 --- !u!1 &1778747591
 GameObject:
   m_ObjectHideFlags: 0
@@ -2091,10 +2170,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1614966169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -3}
+  m_SizeDelta: {x: 0, y: -6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1778747593
 MonoBehaviour:
@@ -2208,6 +2287,7 @@ GameObject:
   - component: {fileID: 1891684451}
   - component: {fileID: 1891684450}
   - component: {fileID: 1891684449}
+  - component: {fileID: 1891684452}
   m_Layer: 5
   m_Name: Button (2)
   m_TagString: Untagged
@@ -2300,7 +2380,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: -5518990023937178466, guid: 3d8cc8dcd10411b4dac6a55be0fbca75, type: 3}
-  m_Type: 0
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2317,6 +2397,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1891684447}
   m_CullTransparentMesh: 1
+--- !u!114 &1891684452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1891684447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe9a985d73863dc429564d1a35654c86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelStarDisplay
+  maxStars: 3
+  starSize: 26
+  starSpacing: 6
+  verticalOffset: -18
 --- !u!1 &2033996623
 GameObject:
   m_ObjectHideFlags: 0
@@ -2374,6 +2470,7 @@ GameObject:
   - component: {fileID: 2035927482}
   - component: {fileID: 2035927484}
   - component: {fileID: 2035927483}
+  - component: {fileID: 2035927485}
   m_Layer: 5
   m_Name: Header
   m_TagString: Untagged
@@ -2429,8 +2526,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294940928
-  m_fontColor: {r: 0, g: 0.60036767, b: 1, a: 1}
+    rgba: 4294425911
+  m_fontColor: {r: 0.21568629, g: 0.7411765, b: 0.9686275, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2500,6 +2597,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2035927481}
   m_CullTransparentMesh: 1
+--- !u!114 &2035927485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2035927481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7c3e1f92b4d5a6e8f9012345678abcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MainMenuHeaderEffect
+  bounceHeight: 14
+  bounceSpeed: 1.8
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

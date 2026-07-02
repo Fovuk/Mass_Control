@@ -12,9 +12,13 @@ public class GameUI : MonoBehaviour
 
     private Image[] starImages;
 
-    void Start()
+    void Awake()
     {
         LoadSpritesIfNeeded();
+    }
+
+    void Start()
+    {
         BuildStarDisplay();
 
         if (GameManager.Instance == null)
@@ -48,20 +52,30 @@ public class GameUI : MonoBehaviour
             return;
         }
 
-        StarUiSprites library = Resources.Load<StarUiSprites>("StarUiSprites");
-        if (library == null)
-        {
-            Debug.LogWarning("GameUI: StarUiSprites bulunamadi.");
-            return;
-        }
+        emptyStarSprite ??= StarUiSprites.GetEmptyStar();
+        filledStarSprite ??= StarUiSprites.GetFilledStar();
 
-        emptyStarSprite ??= library.emptyStar;
-        filledStarSprite ??= library.filledStar;
+        if (emptyStarSprite == null || filledStarSprite == null)
+        {
+            Debug.LogWarning("GameUI: Yildiz sprite'lari yuklenemedi.");
+        }
     }
 
     private void BuildStarDisplay()
     {
+        if (emptyStarSprite == null || filledStarSprite == null)
+        {
+            Debug.LogError("GameUI: Kenney Blue yildiz sprite'lari atanmamis.");
+            return;
+        }
+
+        Transform existingDisplay = transform.Find("StarDisplay");
         Transform legacyStarText = transform.Find("StarText");
+        if (existingDisplay != null)
+        {
+            Destroy(existingDisplay.gameObject);
+        }
+
         if (legacyStarText != null)
         {
             legacyStarText.gameObject.SetActive(false);

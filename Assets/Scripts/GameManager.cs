@@ -45,6 +45,18 @@ public class GameManager : MonoBehaviour
         SetState(GameState.Playing);
         NotifyStarsChanged();
         ValidateLevelStarCount();
+        StartSceneMusicIfNeeded();
+    }
+
+    private void StartSceneMusicIfNeeded()
+    {
+        if (SceneManager.GetActiveScene().buildIndex == mainMenuSceneIndex)
+        {
+            SfxManager.Instance?.PlayMainMenuMusic();
+            return;
+        }
+
+        SfxManager.Instance?.PlayInGameMusic();
     }
 
     void OnDestroy()
@@ -89,6 +101,7 @@ public class GameManager : MonoBehaviour
         }
 
         SetState(GameState.Dead);
+        SfxManager.Instance?.StopInGameMusic();
 
         if (SfxManager.Instance != null)
         {
@@ -114,6 +127,7 @@ public class GameManager : MonoBehaviour
         }
 
         SetState(GameState.LevelComplete);
+        SfxManager.Instance?.StopInGameMusic();
         SfxManager.Instance?.PlayLevelComplete();
         Time.timeScale = 0f;
 

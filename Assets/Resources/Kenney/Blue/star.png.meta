@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3d8cc8dcd10411b4dac6a55be0fbca75
+guid: a7b8c9d0e1f2438596a7b8c9d0e1f24
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5518990023937178466
-    second: button_rectangle_depth_gloss_0
+      213: 4815476061570213978
+    second: star_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,13 +46,13 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 16, y: 16, z: 16, w: 16}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -83,53 +83,27 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: Standalone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: button_rectangle_depth_gloss_0
+      name: star_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 192
-        height: 64
+        width: 64
+        height: 60
       alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 16, y: 16, z: 16, w: 16}
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e94cc4860db9863b0800000000000000
-      internalID: -5518990023937178466
+      spriteID: a582a4ae6f104d240800000000000000
+      internalID: 4815476061570213978
       vertices: []
       indices: 
       edges: []
@@ -148,7 +122,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      button_rectangle_depth_gloss_0: -5518990023937178466
+      star_0: 4815476061570213978
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

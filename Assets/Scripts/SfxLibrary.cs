@@ -7,4 +7,6 @@ public class SfxLibrary : ScriptableObject
     public AudioClip starCollect;
     public AudioClip death;
     public AudioClip levelComplete;
+    public AudioClip inGameMusic;
+    public AudioClip mainMenuMusic;
 }

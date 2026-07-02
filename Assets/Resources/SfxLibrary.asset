@@ -16,3 +16,5 @@ MonoBehaviour:
   starCollect: {fileID: 8300000, guid: 8ed264dbeb56db84294a8c1b8c29778e, type: 3}
   death: {fileID: 8300000, guid: 3efdb9c87914d86468c0f26752aadd64, type: 3}
   levelComplete: {fileID: 8300000, guid: b8763c0dd537bc14bafec7243a7f4697, type: 3}
+  inGameMusic: {fileID: 8300000, guid: 964439e3943fd714cb5625226a310735, type: 3}
+  mainMenuMusic: {fileID: 8300000, guid: eb9733c4eb6ba8a4eba4f8227453b20f, type: 3}
