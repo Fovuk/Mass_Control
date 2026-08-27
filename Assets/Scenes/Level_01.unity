@@ -77240,6 +77240,8 @@ GameObject:
   - component: {fileID: 1098650785}
   - component: {fileID: 1098650784}
   - component: {fileID: 1098650786}
+  - component: {fileID: 1098650788}
+  - component: {fileID: 1098650787}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -77407,10 +77409,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   baseMoveSpeed: 8
-  jumpForce: 8
+  groundAcceleration: 50
+  groundDeceleration: 15
+  turnAcceleration: 110
+  airAcceleration: 100
+  airDeceleration: 25
+  jumpForce: 9
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  coyoteTime: 0.12
+  jumpBufferTime: 0.12
   smallScale: {x: 1, y: 1, z: 1}
   smallMass: 1
   bigScale: {x: 2, y: 2, z: 2}
@@ -77464,6 +77473,60 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerGameplay
   fallDeathY: -10
+--- !u!114 &1098650787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098650779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d745ddba91d4c9a46b8fbc61ee23a471, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLandingJuice
+  dustIntensity: 1.7
+  shakeStrength: 3.2
+  enableLandingDust: 1
+  dustColor: {r: 1, g: 0.71383643, b: 0.74048424, a: 1}
+  landingParticleCount: 20
+  minLandingImpact: 40
+  maxLandingImpact: 100
+  landingDustSpeed: {x: 0.8, y: 1.8}
+  enableMovementDust: 1
+  movementSpeedThreshold: 0.4
+  movementDustInterval: 0.13
+  movementParticleCount: 5
+  particleLifetime: {x: 0.22, y: 0.4}
+  particleSize: {x: 0.6, y: 0.6}
+  footOffsetY: 0.05
+  enableLandingShake: 1
+  shakeMagnitude: 0.2
+  shakeDuration: 0.3
+--- !u!114 &1098650788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098650779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82ee8c6216ab83b4fa8b83fd7146a29e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSquashStretch
+  visual: {fileID: 0}
+  jumpStretch: 0.28
+  landSquash: 0.32
+  minImpactSpeed: 4
+  maxImpactSpeed: 22
+  stretchWithAirVelocity: 1
+  airStretchPerSpeed: 0.012
+  maxAirStretch: 0.18
+  springFrequency: 4.5
+  springDamping: 0.28
+  maxDeform: 0.45
+  preserveVolume: 1
 --- !u!1 &1165359430
 GameObject:
   m_ObjectHideFlags: 0
