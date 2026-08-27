@@ -2,35 +2,14 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-// Migrates loaded Player objects from runtime-only juice components to
-// persistent scene components, so their settings are editable and saveable.
-[InitializeOnLoad]
 public static class PlayerJuiceSetup
 {
-    static PlayerJuiceSetup()
-    {
-        EditorApplication.delayCall += EnsureComponents;
-        EditorApplication.playModeStateChanged += HandlePlayModeChanged;
-    }
-
-    [UnityEditor.Callbacks.DidReloadScripts]
-    private static void OnScriptsReloaded()
-    {
-        EditorApplication.delayCall += EnsureComponents;
-    }
-
-    private static void HandlePlayModeChanged(PlayModeStateChange state)
-    {
-        if (state == PlayModeStateChange.EnteredEditMode)
-        {
-            EditorApplication.delayCall += EnsureComponents;
-        }
-    }
-
     [MenuItem("Tools/Player/Ensure Juice Components")]
     public static void EnsureComponents()
     {
-        if (EditorApplication.isPlayingOrWillChangePlaymode)
+        if (EditorApplication.isPlayingOrWillChangePlaymode ||
+            EditorApplication.isCompiling ||
+            EditorApplication.isUpdating)
         {
             return;
         }

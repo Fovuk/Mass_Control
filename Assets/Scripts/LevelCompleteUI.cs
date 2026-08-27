@@ -113,11 +113,11 @@ public class LevelCompleteUI : MonoBehaviour
 
         int collected = GameManager.Instance.CollectedStars;
         int max = GameManager.Instance.MaxStarsPerLevel;
-        string summary = "Bölüm Tamamlandı!\nYıldız Sayısı: " + collected + "/" + max;
+        string summary = "Yıldız: " + collected + "/" + max;
 
         if (GameManager.Instance.HasNextLevel() && !GameManager.Instance.IsNextLevelUnlocked())
         {
-            summary += "\n\nSonraki bölüm için " + SaveManager.StarsRequiredToUnlockNextLevel + " yıldız gerekli.";
+            summary += "\nSonraki bölüm için " + SaveManager.StarsRequiredToUnlockNextLevel + " yıldız gerekli.";
         }
 
         summaryText.text = summary;
