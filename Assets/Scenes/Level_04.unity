@@ -292,7 +292,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -480.00006, y: 0}
+  m_AnchoredPosition: {x: -544.8, y: 7.5}
   m_SizeDelta: {x: -959.9999, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &56515828
@@ -7735,6 +7735,9 @@ GameObject:
   - component: {fileID: 689658256}
   - component: {fileID: 689658254}
   - component: {fileID: 689658255}
+  - component: {fileID: 689658262}
+  - component: {fileID: 689658261}
+  - component: {fileID: 689658260}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -7779,6 +7782,8 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  coyoteTime: 0.12
+  jumpBufferTime: 0.12
   smallScale: {x: 1, y: 1, z: 1}
   smallMass: 1
   bigScale: {x: 2, y: 2, z: 2}
@@ -7964,6 +7969,75 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &689658260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 689658252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a4c1e7b93d64f2a9c50e6b1d7f83420, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerWalkSfx
+  walkingClip: {fileID: 0}
+  volume: 0.85
+  minSpeed: 0.2
+--- !u!114 &689658261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 689658252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d745ddba91d4c9a46b8fbc61ee23a471, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLandingJuice
+  dustIntensity: 1.7
+  shakeStrength: 3.2
+  enableLandingDust: 1
+  dustColor: {r: 0.86, g: 0.82, b: 0.72, a: 0.75}
+  landingParticleCount: 8
+  minLandingImpact: 3
+  maxLandingImpact: 18
+  landingDustSpeed: {x: 0.8, y: 1.8}
+  enableMovementDust: 1
+  movementSpeedThreshold: 1.5
+  movementDustInterval: 0.13
+  movementParticleCount: 2
+  particleLifetime: {x: 0.22, y: 0.4}
+  particleSize: {x: 0.12, y: 0.28}
+  footOffsetY: 0.02
+  enableLandingShake: 1
+  shakeMagnitude: 0.05
+  shakeDuration: 0.09
+--- !u!114 &689658262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 689658252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82ee8c6216ab83b4fa8b83fd7146a29e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSquashStretch
+  visual: {fileID: 0}
+  jumpStretch: 0.28
+  landSquash: 0.32
+  minImpactSpeed: 4
+  maxImpactSpeed: 22
+  stretchWithAirVelocity: 1
+  airStretchPerSpeed: 0.012
+  maxAirStretch: 0.18
+  springFrequency: 4.5
+  springDamping: 0.28
+  maxDeform: 0.45
+  preserveVolume: 1
 --- !u!1 &695449088
 GameObject:
   m_ObjectHideFlags: 0
@@ -9375,7 +9449,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 3.01, y: 5.71}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -9432,7 +9506,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: -4218210084231829246, guid: cfc59b5740824a244a332ff2ab31bab6, type: 3}
   m_Color: {r: 0, g: 0.86, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -9451,8 +9525,8 @@ Transform:
   m_GameObject: {fileID: 1274500299}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 128.81, y: 30.22, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 128.6841, y: 30.0171, z: 0}
+  m_LocalScale: {x: 0.6233783, y: 0.53998405, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
