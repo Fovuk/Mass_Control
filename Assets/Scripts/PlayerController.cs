@@ -95,6 +95,16 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         currentMoveSpeed = baseMoveSpeed;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+
+        // Default friction makes the box collider snag on tile corners.
+        var slip = new PhysicsMaterial2D("PlayerSlip")
+        {
+            friction = 0f,
+            bounciness = 0f
+        };
+        rb.sharedMaterial = slip;
+        boxCollider.sharedMaterial = slip;
     }
 
     void Update()
@@ -226,20 +236,24 @@ public class PlayerController : MonoBehaviour
             return false;
         }
 
+        // Keep the cast well above the feet. A full-height box hits the tiny
+        // vertical seams between adjacent ground tiles and zeroes movement.
         Vector2 direction = new Vector2(Mathf.Sign(velocityX), 0f);
         Vector2 castSize = boxCollider.bounds.size;
-        castSize.x *= 0.95f;
-        castSize.y *= 0.95f;
+        castSize.x *= 0.9f;
+        castSize.y *= 0.55f;
+        Vector2 origin = (Vector2)boxCollider.bounds.center + Vector2.up * (boxCollider.bounds.extents.y * 0.2f);
 
         RaycastHit2D hit = Physics2D.BoxCast(
-            boxCollider.bounds.center,
+            origin,
             castSize,
             0f,
             direction,
             wallCheckDistance,
             groundLayer);
 
-        return hit.collider != null;
+        // Floor/ceiling contacts have a mostly vertical normal; ignore those.
+        return hit.collider != null && Mathf.Abs(hit.normal.x) > 0.7f;
     }
 
     public void OnMove(InputValue value)
