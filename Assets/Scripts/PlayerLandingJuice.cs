@@ -287,7 +287,7 @@ public class PlayerLandingJuice : MonoBehaviour
             impulseSource.DefaultVelocity = Vector3.down;
         }
 
-        CinemachineCamera virtualCamera = Object.FindFirstObjectByType<CinemachineCamera>();
+        CinemachineCamera virtualCamera = Object.FindAnyObjectByType<CinemachineCamera>();
         if (virtualCamera == null)
         {
             Debug.LogWarning("[PlayerLandingJuice] CinemachineCamera bulunamadi; ekran sarsintisi calisamaz.", this);
