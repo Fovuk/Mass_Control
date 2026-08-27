@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afc202f54648cc241b2d6da8f90df349, type: 3}
   m_Name: SfxLibrary
   m_EditorClassIdentifier: Assembly-CSharp::SfxLibrary
-  jump: {fileID: 8300000, guid: dc6b1ea463211a942894f8533a3b6d1b, type: 3}
+  jump: {fileID: 8300000, guid: da691581bcc25dc4995606af9ed80bfe, type: 3}
   starCollect: {fileID: 8300000, guid: 8ed264dbeb56db84294a8c1b8c29778e, type: 3}
-  death: {fileID: 8300000, guid: 3efdb9c87914d86468c0f26752aadd64, type: 3}
+  death: {fileID: 8300000, guid: 7aeeca5d0bc70d64a87b38bcb00750b3, type: 3}
   levelComplete: {fileID: 8300000, guid: b8763c0dd537bc14bafec7243a7f4697, type: 3}
   inGameMusic: {fileID: 8300000, guid: 1ec1c7faa94e54542a2cbf30513faae3, type: 3}
   mainMenuMusic: {fileID: 8300000, guid: eddbe866704b4424691338a53a198173, type: 3}
+  buttonClick: {fileID: 8300000, guid: 31404716a01d13c46bc5b20433d9ea49, type: 3}
+  walk: {fileID: 8300000, guid: 9ca38218b83cc7d43b2da43f05ef1e93, type: 3}
+  sizeChange: {fileID: 8300000, guid: fcf5ee8d92840554abce3ec655f8a33c, type: 3}

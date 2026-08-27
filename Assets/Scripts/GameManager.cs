@@ -34,9 +34,10 @@ public class GameManager : MonoBehaviour
 
     private void EnsureSfxManager()
     {
-        if (GetComponent<SfxManager>() == null)
+        if (SfxManager.Instance == null)
         {
-            gameObject.AddComponent<SfxManager>();
+            var audioManager = new GameObject("Audio Manager");
+            audioManager.AddComponent<SfxManager>();
         }
     }
 

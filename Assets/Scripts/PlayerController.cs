@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(PlayerSquashStretch), typeof(PlayerLandingJuice))]
+[RequireComponent(typeof(PlayerSquashStretch), typeof(PlayerLandingJuice), typeof(PlayerWalkSfx))]
 public class PlayerController : MonoBehaviour
 {
     public event Action Jumped;
@@ -82,6 +82,11 @@ public class PlayerController : MonoBehaviour
         if (GetComponent<PlayerLandingJuice>() == null)
         {
             gameObject.AddComponent<PlayerLandingJuice>();
+        }
+
+        if (GetComponent<PlayerWalkSfx>() == null)
+        {
+            gameObject.AddComponent<PlayerWalkSfx>();
         }
     }
 
@@ -348,5 +353,7 @@ public class PlayerController : MonoBehaviour
             float reducedVelocityX = rb.linearVelocity.x * smallMorphVelocityScale;
             rb.linearVelocity = new Vector2(reducedVelocityX, rb.linearVelocity.y);
         }
+
+        SfxManager.Instance?.PlaySizeChange();
     }
 }

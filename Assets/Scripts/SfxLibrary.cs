@@ -9,4 +9,7 @@ public class SfxLibrary : ScriptableObject
     public AudioClip levelComplete;
     public AudioClip inGameMusic;
     public AudioClip mainMenuMusic;
+    public AudioClip buttonClick;
+    public AudioClip walk;
+    public AudioClip sizeChange;
 }
