@@ -1,2 +1,17 @@
 fileFormatVersion: 2
 guid: afc202f54648cc241b2d6da8f90df349
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - jump: {fileID: 8300000, guid: 4d34e0588f94c3b4e91ec8d288dc8c9c, type: 3}
+  - starCollect: {instanceID: 0}
+  - death: {instanceID: 0}
+  - levelComplete: {instanceID: 0}
+  - inGameMusic: {instanceID: 0}
+  - mainMenuMusic: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
