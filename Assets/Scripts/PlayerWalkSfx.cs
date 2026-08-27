@@ -44,7 +44,8 @@ public class PlayerWalkSfx : MonoBehaviour
 
         if (shouldPlay)
         {
-            source.volume = volume;
+            float masterSfx = SfxManager.Instance != null ? SfxManager.Instance.SfxVolume : 1f;
+            source.volume = volume * masterSfx;
             if (!source.isPlaying)
             {
                 source.Play();

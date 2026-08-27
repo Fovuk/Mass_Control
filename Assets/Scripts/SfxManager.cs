@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem.OnScreen;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -8,10 +9,16 @@ public class SfxManager : MonoBehaviour
 {
     public static SfxManager Instance { get; private set; }
 
+    private const string MusicVolumeKey = "Settings_MusicVolume";
+    private const string SfxVolumeKey = "Settings_SfxVolume";
+
     [SerializeField] private SfxLibrary library;
+
     [Header("Music Volumes")]
     [SerializeField, Range(0f, 1f)] private float mainMenuMusicVolume = 0.45f;
     [SerializeField, Range(0f, 1f)] private float inGameMusicVolume = 0.2f;
+    [SerializeField] private float defaultMusicVolume = 0.45f;
+    [SerializeField] private float defaultSfxVolume = 1f;
     [SerializeField] private float musicFadeDuration = 1.5f;
 
     [Header("SFX Volumes")]
@@ -31,12 +38,17 @@ public class SfxManager : MonoBehaviour
     private AudioSource walkingSource;
     private Coroutine musicFadeCoroutine;
     private bool walking;
+    private float lastMusicTarget;
+    private float lastSfxPreviewTime = -1f;
 
     private AudioClip fallbackJump;
     private AudioClip fallbackButton;
     private AudioClip fallbackWalk;
     private AudioClip fallbackSizeChange;
     private AudioClip fallbackDeath;
+
+    public float MusicVolume { get; private set; }
+    public float SfxVolume { get; private set; }
 
     void Awake()
     {
@@ -64,15 +76,16 @@ public class SfxManager : MonoBehaviour
         walkingSource.playOnAwake = false;
         walkingSource.loop = true;
         walkingSource.spatialBlend = 0f;
-        walkingSource.volume = walkingVolume;
 
         if (library == null)
         {
             library = Resources.Load<SfxLibrary>("SfxLibrary");
         }
 
+        LoadVolumes();
         CreateFallbackClips();
         ResolveLibraryClips();
+        ApplySfxVolume();
         SceneManager.sceneLoaded += HandleSceneLoaded;
     }
 
@@ -92,6 +105,36 @@ public class SfxManager : MonoBehaviour
         DestroyFallbackClips();
     }
 
+    public void SetMusicVolume(float value)
+    {
+        MusicVolume = Mathf.Clamp01(value);
+        PlayerPrefs.SetFloat(MusicVolumeKey, MusicVolume);
+
+        if (musicFadeCoroutine != null)
+        {
+            StopCoroutine(musicFadeCoroutine);
+            musicFadeCoroutine = null;
+        }
+
+        if (musicSource != null && musicSource.isPlaying)
+        {
+            musicSource.volume = ScaledMusicVolume(lastMusicTarget);
+        }
+    }
+
+    public void SetSfxVolume(float value)
+    {
+        SfxVolume = Mathf.Clamp01(value);
+        PlayerPrefs.SetFloat(SfxVolumeKey, SfxVolume);
+        ApplySfxVolume();
+
+        if (Time.unscaledTime - lastSfxPreviewTime > 0.12f)
+        {
+            lastSfxPreviewTime = Time.unscaledTime;
+            PlayJump();
+        }
+    }
+
     public void PlayMainMenuMusic()
     {
         PlayMusic(library?.mainMenuMusic, mainMenuMusicVolume);
@@ -109,11 +152,12 @@ public class SfxManager : MonoBehaviour
             return;
         }
 
+        lastMusicTarget = targetVolume;
         musicSource.clip = clip;
         musicSource.loop = true;
         musicSource.volume = 0f;
         musicSource.Play();
-        FadeMusicTo(targetVolume);
+        FadeMusicTo(ScaledMusicVolume(targetVolume));
     }
 
     public void StopInGameMusic()
@@ -147,7 +191,7 @@ public class SfxManager : MonoBehaviour
         if (walking)
         {
             walkingSource.clip = ResolveClip(library?.walk, "Audio/Walking") ?? fallbackWalk;
-            walkingSource.volume = walkingVolume;
+            walkingSource.volume = ScaledSfxVolume(walkingVolume);
             if (walkingSource.clip != null)
             {
                 walkingSource.clip.LoadAudioData();
@@ -183,9 +227,33 @@ public class SfxManager : MonoBehaviour
         Play(library?.levelComplete);
     }
 
+    private void LoadVolumes()
+    {
+        MusicVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(MusicVolumeKey, defaultMusicVolume));
+        SfxVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(SfxVolumeKey, defaultSfxVolume));
+    }
+
+    private void ApplySfxVolume()
+    {
+        if (walkingSource != null && walking)
+        {
+            walkingSource.volume = ScaledSfxVolume(walkingVolume);
+        }
+    }
+
+    private float ScaledMusicVolume(float volume)
+    {
+        return volume * MusicVolume;
+    }
+
+    private float ScaledSfxVolume(float volume)
+    {
+        return volume * SfxVolume;
+    }
+
     private void Play(AudioClip clip, float volume = 1f, bool randomizePitch = false)
     {
-        if (clip == null || sfxSource == null)
+        if (clip == null || sfxSource == null || SfxVolume <= 0f)
         {
             return;
         }
@@ -198,7 +266,7 @@ public class SfxManager : MonoBehaviour
             sfxSource.pitch = UnityEngine.Random.Range(minPitch, maxPitch);
         }
 
-        sfxSource.PlayOneShot(clip, volume);
+        sfxSource.PlayOneShot(clip, ScaledSfxVolume(volume));
         sfxSource.pitch = previousPitch;
     }
 
@@ -241,6 +309,11 @@ public class SfxManager : MonoBehaviour
         Button[] buttons = FindObjectsByType<Button>(FindObjectsInactive.Include);
         foreach (Button button in buttons)
         {
+            if (button.GetComponent<OnScreenButton>() != null)
+            {
+                continue;
+            }
+
             if (button.GetComponent<ButtonClickSfx>() == null)
             {
                 button.gameObject.AddComponent<ButtonClickSfx>();
