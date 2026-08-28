@@ -57,6 +57,8 @@ public class PlayerController : MonoBehaviour
 
     public bool IsBigForm => isBig;
 
+    public float HorizontalVelocity => rb != null ? rb.linearVelocity.x : 0f;
+
     [Header("Büyük Form Momentum")]
     [SerializeField] private float bigMoveSpeedMultiplier = 0.6f;
     [SerializeField] private float bigMomentumMultiplier = 1.5f;
@@ -235,7 +237,8 @@ public class PlayerController : MonoBehaviour
         int count = boxCollider.Overlap(filter, OverlapBuffer);
         for (int i = 0; i < count; i++)
         {
-            if (OverlapBuffer[i] != null && OverlapBuffer[i].CompareTag("Pushable"))
+            Collider2D other = OverlapBuffer[i];
+            if (other != null && other.CompareTag("Pushable") && boxCollider.IsTouching(other))
             {
                 return true;
             }

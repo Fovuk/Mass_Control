@@ -5,19 +5,44 @@ using UnityEngine;
 [DefaultExecutionOrder(100)]
 public class PushableObject : MonoBehaviour
 {
-    private static readonly Collider2D[] OverlapBuffer = new Collider2D[8];
+    [SerializeField] private float smallBlockGrace = 0.15f;
+    [Tooltip("Surface friction — lets the ball roll from physics instead of scripted spin.")]
+    [SerializeField] private float rollFriction = 0.55f;
+    [SerializeField] private float stopSpeedThreshold = 0.12f;
+    [SerializeField] private float stopAngularThreshold = 8f;
 
     private Rigidbody2D rb;
-    private Collider2D objectCollider;
+    private Collider2D[] colliders;
+    private PlayerController player;
+    private Collider2D playerCollider;
     private float lockedPositionX;
     private bool hasLockedPositionX;
+    private float smallBlockTimer;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        objectCollider = GetComponent<Collider2D>();
+        colliders = GetComponents<Collider2D>();
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+        rb.angularDamping = 0.05f;
+        rb.linearDamping = 0.02f;
         lockedPositionX = rb.position.x;
         hasLockedPositionX = true;
+
+        var ballMaterial = new PhysicsMaterial2D("PushableBall")
+        {
+            friction = rollFriction,
+            bounciness = 0f
+        };
+        rb.sharedMaterial = ballMaterial;
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            if (colliders[i] != null)
+            {
+                colliders[i].sharedMaterial = ballMaterial;
+            }
+        }
 
         if (!CompareTag("Pushable"))
         {
@@ -25,12 +50,26 @@ public class PushableObject : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        player = FindAnyObjectByType<PlayerController>();
+        if (player != null)
+        {
+            playerCollider = player.GetComponent<Collider2D>();
+        }
+    }
+
     void FixedUpdate()
     {
-        if (IsBlockedBySmallPlayer())
+        smallBlockTimer = Mathf.Max(0f, smallBlockTimer - Time.fixedDeltaTime);
+        RefreshSmallBlockFromTouching();
+
+        if (smallBlockTimer > 0f)
         {
             rb.bodyType = RigidbodyType2D.Kinematic;
+            rb.constraints = RigidbodyConstraints2D.FreezeAll;
             rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
             rb.position = new Vector2(lockedPositionX, rb.position.y);
             return;
         }
@@ -40,40 +79,20 @@ public class PushableObject : MonoBehaviour
             rb.bodyType = RigidbodyType2D.Dynamic;
         }
 
-        if (IsTouchingBigPlayer())
+        bool playerDriving =
+            player != null && player.IsBigForm && playerCollider != null && IsTouchingPlayer();
+
+        bool atRest =
+            !playerDriving &&
+            Mathf.Abs(rb.linearVelocity.x) < stopSpeedThreshold &&
+            Mathf.Abs(rb.angularVelocity) < stopAngularThreshold;
+
+        if (atRest)
         {
-            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-            lockedPositionX = rb.position.x;
-            hasLockedPositionX = true;
-            return;
-        }
-
-        rb.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
-        rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
-
-        if (!hasLockedPositionX)
-        {
-            lockedPositionX = rb.position.x;
-            hasLockedPositionX = true;
-        }
-
-        rb.position = new Vector2(lockedPositionX, rb.position.y);
-    }
-
-    private bool IsBlockedBySmallPlayer()
-    {
-        ContactFilter2D filter = new ContactFilter2D();
-        filter.useTriggers = false;
-        filter.useLayerMask = false;
-
-        int count = objectCollider.Overlap(filter, OverlapBuffer);
-        for (int i = 0; i < count; i++)
-        {
-            Collider2D other = OverlapBuffer[i];
-            if (other == null || !IsSmallPlayer(other))
-            {
-                continue;
-            }
+            rb.constraints =
+                RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
+            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+            rb.angularVelocity = 0f;
 
             if (!hasLockedPositionX)
             {
@@ -81,40 +100,65 @@ public class PushableObject : MonoBehaviour
                 hasLockedPositionX = true;
             }
 
-            return true;
+            rb.position = new Vector2(lockedPositionX, rb.position.y);
+            return;
         }
 
-        return false;
+        // Free rotation + translation — physics drives roll from friction and collisions.
+        rb.constraints = RigidbodyConstraints2D.None;
+        lockedPositionX = rb.position.x;
+        hasLockedPositionX = true;
     }
 
-    private bool IsTouchingBigPlayer()
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        ContactFilter2D filter = new ContactFilter2D();
-        filter.useTriggers = false;
-        filter.useLayerMask = false;
+        RegisterSmallPlayerCollision(collision);
+    }
 
-        int count = objectCollider.Overlap(filter, OverlapBuffer);
-        for (int i = 0; i < count; i++)
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        RegisterSmallPlayerCollision(collision);
+    }
+
+    private void RegisterSmallPlayerCollision(Collision2D collision)
+    {
+        PlayerController hitPlayer = GetPlayerController(collision.collider);
+        if (hitPlayer == null || hitPlayer.IsBigForm)
         {
-            if (IsBigPlayer(OverlapBuffer[i]))
+            return;
+        }
+
+        smallBlockTimer = smallBlockGrace;
+
+        if (!hasLockedPositionX)
+        {
+            lockedPositionX = rb.position.x;
+            hasLockedPositionX = true;
+        }
+    }
+
+    private void RefreshSmallBlockFromTouching()
+    {
+        if (player == null || playerCollider == null || player.IsBigForm || !IsTouchingPlayer())
+        {
+            return;
+        }
+
+        smallBlockTimer = smallBlockGrace;
+    }
+
+    private bool IsTouchingPlayer()
+    {
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            Collider2D col = colliders[i];
+            if (col != null && col.enabled && col.IsTouching(playerCollider))
             {
                 return true;
             }
         }
 
         return false;
-    }
-
-    private static bool IsSmallPlayer(Collider2D collider)
-    {
-        PlayerController player = GetPlayerController(collider);
-        return player != null && !player.IsBigForm;
-    }
-
-    private static bool IsBigPlayer(Collider2D collider)
-    {
-        PlayerController player = GetPlayerController(collider);
-        return player != null && player.IsBigForm;
     }
 
     private static PlayerController GetPlayerController(Collider2D collider)
@@ -124,10 +168,10 @@ public class PushableObject : MonoBehaviour
             return null;
         }
 
-        PlayerController player = collider.GetComponent<PlayerController>();
-        if (player != null)
+        PlayerController hitPlayer = collider.GetComponent<PlayerController>();
+        if (hitPlayer != null)
         {
-            return player;
+            return hitPlayer;
         }
 
         return collider.GetComponentInParent<PlayerController>();
