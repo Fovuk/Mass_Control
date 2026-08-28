@@ -214,12 +214,23 @@ public class SfxManager : MonoBehaviour
         Play(library?.starCollect);
     }
 
-    public void PlayDeath(Action onComplete)
+    public void PlayDeath(Action onComplete, float holdDuration = 0.85f)
     {
         SetWalking(false);
         AudioClip clip = library?.death ?? fallbackDeath;
-        Play(clip, deathVolume);
-        StartCoroutine(WaitForClip(clip != null ? clip.length : 0f, onComplete));
+        PlayDeathClip(clip);
+        StartCoroutine(WaitForClip(holdDuration, onComplete));
+    }
+
+    private void PlayDeathClip(AudioClip clip)
+    {
+        if (clip == null || sfxSource == null || SfxVolume <= 0f)
+        {
+            return;
+        }
+
+        sfxSource.pitch = 1f;
+        sfxSource.PlayOneShot(clip, ScaledSfxVolume(deathVolume));
     }
 
     public void PlayLevelComplete()

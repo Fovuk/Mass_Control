@@ -88,6 +88,11 @@ public class PlayerController : MonoBehaviour
         {
             gameObject.AddComponent<PlayerWalkSfx>();
         }
+
+        if (GetComponent<PlayerDeathHandler>() == null)
+        {
+            gameObject.AddComponent<PlayerDeathHandler>();
+        }
     }
 
     void Start()
@@ -109,6 +114,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance != null && GameManager.Instance.CurrentState != GameState.Playing)
+        {
+            return;
+        }
+
         bool groundedNow = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, 0.1f, groundLayer);
 
         // A ground cast can still touch the floor for a frame immediately after
@@ -153,6 +163,11 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (GameManager.Instance != null && GameManager.Instance.CurrentState != GameState.Playing)
+        {
+            return;
+        }
+
         float targetVelocityX = horizontalInput * currentMoveSpeed;
         float newVelocityX;
 

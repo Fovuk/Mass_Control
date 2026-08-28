@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Sahne Ayarları")]
     [SerializeField] private int mainMenuSceneIndex = 0;
+    [SerializeField] private float deathBeatDuration = 0.85f;
 
     public GameState CurrentState { get; private set; } = GameState.Playing;
     public int CollectedStars { get; private set; }
@@ -30,6 +31,8 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         EnsureSfxManager();
+        DeathScreenEffect.EnsureOn(this);
+        LevelWakeUpEffect.EnsureOn(this);
     }
 
     private void EnsureSfxManager()
@@ -43,6 +46,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        Time.timeScale = 1f;
         SetState(GameState.Playing);
         NotifyStarsChanged();
         ValidateLevelStarCount();
@@ -106,12 +110,18 @@ public class GameManager : MonoBehaviour
 
         if (SfxManager.Instance != null)
         {
-            SfxManager.Instance.PlayDeath(DieAndRestart);
+            SfxManager.Instance.PlayDeath(DieAndRestart, deathBeatDuration);
         }
         else
         {
-            DieAndRestart();
+            StartCoroutine(RestartAfterDelay(deathBeatDuration));
         }
+    }
+
+    private System.Collections.IEnumerator RestartAfterDelay(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        DieAndRestart();
     }
 
     public void CompleteLevel()
