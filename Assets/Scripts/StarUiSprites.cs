@@ -35,8 +35,13 @@ public class StarUiSprites : ScriptableObject
             return;
         }
 
-        cachedEmptyStar = Resources.Load<Sprite>("Kenney/Blue/star_outline");
+        cachedEmptyStar = Resources.Load<Sprite>("Kenney/Grey/star_outline");
         cachedFilledStar = Resources.Load<Sprite>("Kenney/Blue/star");
+
+        if (cachedEmptyStar == null)
+        {
+            cachedEmptyStar = Resources.Load<Sprite>("Kenney/Blue/star_outline");
+        }
 
         if (cachedEmptyStar != null && cachedFilledStar != null)
         {

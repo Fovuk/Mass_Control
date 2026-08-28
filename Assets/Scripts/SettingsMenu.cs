@@ -3,8 +3,13 @@ using UnityEngine.UI;
 
 public class SettingsMenu : MonoBehaviour
 {
+    private static readonly Color SelectedLanguageColor = new Color(0.22f, 0.74f, 0.97f, 1f);
+    private static readonly Color NormalLanguageColor = Color.white;
+
     [SerializeField] private PointerDrivenSlider musicSlider;
     [SerializeField] private PointerDrivenSlider sfxSlider;
+    [SerializeField] private Button languageTrButton;
+    [SerializeField] private Button languageEnButton;
 
     void Awake()
     {
@@ -17,12 +22,29 @@ public class SettingsMenu : MonoBehaviour
         {
             sfxSlider = transform.Find("SettingsPanel/SfxSlider")?.GetComponent<PointerDrivenSlider>();
         }
+
+        if (languageTrButton == null)
+        {
+            languageTrButton = transform.Find("SettingsPanel/LanguageTR")?.GetComponent<Button>();
+        }
+
+        if (languageEnButton == null)
+        {
+            languageEnButton = transform.Find("SettingsPanel/LanguageEN")?.GetComponent<Button>();
+        }
     }
 
     void OnEnable()
     {
+        LocalizationManager.EnsureInstance();
+
         BindSlider(musicSlider, GetMusicVolume(), OnMusicChanged);
         BindSlider(sfxSlider, GetSfxVolume(), OnSfxChanged);
+
+        languageTrButton?.onClick.AddListener(OnTurkishSelected);
+        languageEnButton?.onClick.AddListener(OnEnglishSelected);
+        LocalizationManager.Instance.OnLanguageChanged += RefreshLanguageButtons;
+        RefreshLanguageButtons();
     }
 
     void OnDisable()
@@ -37,7 +59,52 @@ public class SettingsMenu : MonoBehaviour
             sfxSlider.OnValueChanged -= OnSfxChanged;
         }
 
+        languageTrButton?.onClick.RemoveListener(OnTurkishSelected);
+        languageEnButton?.onClick.RemoveListener(OnEnglishSelected);
+
+        if (LocalizationManager.Instance != null)
+        {
+            LocalizationManager.Instance.OnLanguageChanged -= RefreshLanguageButtons;
+        }
+
         PlayerPrefs.Save();
+    }
+
+    private void OnTurkishSelected()
+    {
+        LocalizationManager.Instance.SetLanguage(GameLanguage.TR);
+        SfxManager.Instance?.PlayButtonClick();
+    }
+
+    private void OnEnglishSelected()
+    {
+        LocalizationManager.Instance.SetLanguage(GameLanguage.EN);
+        SfxManager.Instance?.PlayButtonClick();
+    }
+
+    private void RefreshLanguageButtons()
+    {
+        if (LocalizationManager.Instance == null)
+        {
+            return;
+        }
+
+        SetLanguageButtonVisual(languageTrButton, LocalizationManager.Instance.CurrentLanguage == GameLanguage.TR);
+        SetLanguageButtonVisual(languageEnButton, LocalizationManager.Instance.CurrentLanguage == GameLanguage.EN);
+    }
+
+    private static void SetLanguageButtonVisual(Button button, bool selected)
+    {
+        if (button == null)
+        {
+            return;
+        }
+
+        Image image = button.targetGraphic as Image;
+        if (image != null)
+        {
+            image.color = selected ? SelectedLanguageColor : NormalLanguageColor;
+        }
     }
 
     private void BindSlider(PointerDrivenSlider slider, float currentValue, System.Action<float> callback)

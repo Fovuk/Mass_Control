@@ -9,6 +9,8 @@ public class GameUI : MonoBehaviour
     [SerializeField] private Sprite filledStarSprite;
     [SerializeField] private float starSize = 48f;
     [SerializeField] private float starSpacing = 10f;
+    [SerializeField] private Color filledStarColor = Color.white;
+    [SerializeField] private Color emptyStarColor = new Color(0.62f, 0.64f, 0.68f, 1f);
 
     private Image[] starImages;
 
@@ -122,6 +124,7 @@ public class GameUI : MonoBehaviour
 
             Image image = starObject.GetComponent<Image>();
             image.sprite = emptyStarSprite;
+            image.color = emptyStarColor;
             image.preserveAspect = true;
             image.raycastTarget = false;
 
@@ -143,7 +146,9 @@ public class GameUI : MonoBehaviour
                 continue;
             }
 
-            starImages[i].sprite = i < collected ? filledStarSprite : emptyStarSprite;
+            bool isFilled = i < collected;
+            starImages[i].sprite = isFilled ? filledStarSprite : emptyStarSprite;
+            starImages[i].color = isFilled ? filledStarColor : emptyStarColor;
         }
     }
 

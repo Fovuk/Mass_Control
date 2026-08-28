@@ -9,29 +9,44 @@ public class LevelStarDisplay : MonoBehaviour
     [SerializeField] private float starSize = 26f;
     [SerializeField] private float starSpacing = 6f;
     [SerializeField] private float verticalOffset = -18f;
+    [SerializeField] private Color filledStarColor = Color.white;
+    [SerializeField] private Color emptyStarColor = new Color(0.62f, 0.64f, 0.68f, 1f);
 
     private Image[] starImages;
     private Sprite emptyStarSprite;
     private Sprite filledStarSprite;
+    private int displayedStars;
 
     void OnEnable()
     {
         LoadSprites();
         BuildDisplay();
         ApplyLayout();
-        CacheStarImages();
+        CacheStarImages(force: true);
+        ApplyStars();
     }
 
     public void SetStars(int collected)
     {
+        displayedStars = Mathf.Clamp(collected, 0, maxStars);
+        ApplyStars();
+    }
+
+    private void ApplyStars()
+    {
         CacheStarImages();
 
-        if (starImages == null)
+        if (starImages == null || starImages.Length == 0)
         {
             return;
         }
 
-        collected = Mathf.Clamp(collected, 0, maxStars);
+        LoadSprites();
+
+        if (emptyStarSprite == null || filledStarSprite == null)
+        {
+            return;
+        }
 
         for (int i = 0; i < starImages.Length; i++)
         {
@@ -40,7 +55,9 @@ public class LevelStarDisplay : MonoBehaviour
                 continue;
             }
 
-            starImages[i].sprite = i < collected ? filledStarSprite : emptyStarSprite;
+            bool isFilled = i < displayedStars;
+            starImages[i].sprite = isFilled ? filledStarSprite : emptyStarSprite;
+            starImages[i].color = isFilled ? filledStarColor : emptyStarColor;
         }
     }
 
@@ -92,6 +109,7 @@ public class LevelStarDisplay : MonoBehaviour
 
             Image image = starObject.GetComponent<Image>();
             image.sprite = emptyStarSprite;
+            image.color = emptyStarColor;
             image.preserveAspect = true;
             image.raycastTarget = false;
 
@@ -118,9 +136,9 @@ public class LevelStarDisplay : MonoBehaviour
         containerRect.sizeDelta = new Vector2(totalWidth, starSize);
     }
 
-    private void CacheStarImages()
+    private void CacheStarImages(bool force = false)
     {
-        if (starImages != null && starImages.Length > 0)
+        if (!force && starImages != null && starImages.Length > 0)
         {
             return;
         }
@@ -128,6 +146,7 @@ public class LevelStarDisplay : MonoBehaviour
         Transform container = transform.Find("LevelStars");
         if (container == null)
         {
+            starImages = null;
             return;
         }
 

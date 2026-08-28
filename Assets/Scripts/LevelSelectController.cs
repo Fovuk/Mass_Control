@@ -46,6 +46,16 @@ public class LevelSelectController : MonoBehaviour
         BindButtonListeners();
     }
 
+    void Start()
+    {
+        if (!Application.isPlaying)
+        {
+            return;
+        }
+
+        RefreshLevelButtons();
+    }
+
     void OnDisable()
     {
         if (!Application.isPlaying)

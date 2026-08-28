@@ -44,6 +44,9 @@ public class LevelCompleteUI : MonoBehaviour
 
     void Start()
     {
+        LocalizationManager.EnsureInstance();
+        LocalizationManager.Instance.OnLanguageChanged += HandleLanguageChanged;
+
         if (GameManager.Instance == null)
         {
             Debug.LogError("[LevelCompleteUI] GameManager bulunamadi.");
@@ -56,6 +59,11 @@ public class LevelCompleteUI : MonoBehaviour
 
     void OnDestroy()
     {
+        if (LocalizationManager.Instance != null)
+        {
+            LocalizationManager.Instance.OnLanguageChanged -= HandleLanguageChanged;
+        }
+
         if (GameManager.Instance != null)
         {
             GameManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
@@ -64,6 +72,15 @@ public class LevelCompleteUI : MonoBehaviour
         playAgainButton?.onClick.RemoveListener(OnPlayAgainClicked);
         nextLevelButton?.onClick.RemoveListener(OnNextLevelClicked);
         mainMenuButton?.onClick.RemoveListener(OnMainMenuClicked);
+    }
+
+    private void HandleLanguageChanged()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.LevelComplete)
+        {
+            UpdateSummaryText();
+            UpdateNextLevelButton();
+        }
     }
 
     private void HandleGameStateChanged(GameState state)
@@ -111,13 +128,22 @@ public class LevelCompleteUI : MonoBehaviour
             return;
         }
 
+        if (LocalizationManager.Instance != null &&
+            LocalizationManager.Instance.CurrentLanguage == GameLanguage.TR)
+        {
+            LocalizationManager.ApplyUiFont(summaryText);
+            LocalizationManager.ApplyUiFont(nextLevelHintText);
+        }
+
         int collected = GameManager.Instance.CollectedStars;
         int max = GameManager.Instance.MaxStarsPerLevel;
-        string summary = "Yıldız: " + collected + "/" + max;
+        string summary = LocalizationManager.Format("stars_format", collected, max);
 
         if (GameManager.Instance.HasNextLevel() && !GameManager.Instance.IsNextLevelUnlocked())
         {
-            summary += "\nSonraki bölüm için " + SaveManager.StarsRequiredToUnlockNextLevel + " yıldız gerekli.";
+            summary += "\n" + LocalizationManager.Format(
+                "unlock_requirement",
+                SaveManager.StarsRequiredToUnlockNextLevel);
         }
 
         summaryText.text = summary;
@@ -149,7 +175,9 @@ public class LevelCompleteUI : MonoBehaviour
             }
             else
             {
-                nextLevelHintText.text = SaveManager.StarsRequiredToUnlockNextLevel + " yıldız ile açılır";
+                nextLevelHintText.text = LocalizationManager.Format(
+                    "unlock_hint",
+                    SaveManager.StarsRequiredToUnlockNextLevel);
             }
         }
     }
