@@ -19,7 +19,7 @@ public class MainMenuButtonIcons : MonoBehaviour
             quitIcon = transform.Find("QuitButton/Icon")?.GetComponent<Image>();
         }
 
-        ApplyIcon(settingsIcon, "UI/wheel");
+        ApplyIcon(settingsIcon, "UI/wheel-button");
         ApplyIcon(quitIcon, "UI/exit-button");
     }
 
@@ -30,18 +30,23 @@ public class MainMenuButtonIcons : MonoBehaviour
             return;
         }
 
-        Sprite sprite = Resources.Load<Sprite>(resourcePath);
+        Sprite sprite = target.sprite;
         if (sprite == null)
         {
-            sprite = Resources.Load<Sprite>(resourcePath + "_0");
-        }
-        if (sprite == null)
-        {
-            Debug.LogWarning($"[MainMenuButtonIcons] Sprite bulunamadi: {resourcePath}");
-            return;
+            sprite = Resources.Load<Sprite>(resourcePath);
+            if (sprite == null)
+            {
+                sprite = Resources.Load<Sprite>(resourcePath + "_0");
+            }
+            if (sprite == null)
+            {
+                Debug.LogWarning($"[MainMenuButtonIcons] Sprite bulunamadi: {resourcePath}");
+                return;
+            }
+
+            target.sprite = sprite;
         }
 
-        target.sprite = sprite;
         target.preserveAspect = true;
         target.color = Color.white;
     }

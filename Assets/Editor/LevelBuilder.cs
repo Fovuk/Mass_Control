@@ -229,6 +229,8 @@ public static class LevelBuilder
         var col = go.AddComponent<BoxCollider2D>();
         col.isTrigger = true;
         col.size = new Vector2(0.88f, 1f);
+
+        go.AddComponent<CollectibleStarSpin>();
     }
 
     static void PlacePushable(Vector2 pos)
