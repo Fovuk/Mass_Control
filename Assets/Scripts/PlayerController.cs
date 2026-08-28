@@ -66,10 +66,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float bigAcceleration = 18f;
     [SerializeField] private float bigMomentumDecay = 12f;
     [SerializeField] private float wallCheckDistance = 0.08f;
+    [Header("Yer Algilama")]
+    [SerializeField] private float groundCheckDistance = 0.12f;
+    [SerializeField] private float groundCheckWidthScale = 0.55f;
+    [SerializeField, Range(0.4f, 1f)] private float minGroundNormalY = 0.65f;
 
     private static readonly Collider2D[] OverlapBuffer = new Collider2D[4];
 
     private Rigidbody2D rb;
+    private Collider2D bodyCollider;
     private BoxCollider2D boxCollider;
 
     void Awake()
@@ -95,14 +100,16 @@ public class PlayerController : MonoBehaviour
         {
             gameObject.AddComponent<PlayerDeathHandler>();
         }
+
+        rb = GetComponent<Rigidbody2D>();
+        ConfigureBodyCollider();
     }
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
         currentMoveSpeed = baseMoveSpeed;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        rb.sleepMode = RigidbodySleepMode2D.NeverSleep;
 
         // Default friction makes the box collider snag on tile corners.
         var slip = new PhysicsMaterial2D("PlayerSlip")
@@ -111,7 +118,62 @@ public class PlayerController : MonoBehaviour
             bounciness = 0f
         };
         rb.sharedMaterial = slip;
-        boxCollider.sharedMaterial = slip;
+        if (bodyCollider != null)
+        {
+            bodyCollider.sharedMaterial = slip;
+        }
+    }
+
+    private void ConfigureBodyCollider()
+    {
+        boxCollider = GetComponent<BoxCollider2D>();
+        CapsuleCollider2D capsule = GetComponent<CapsuleCollider2D>();
+
+        if (capsule != null)
+        {
+            if (boxCollider != null)
+            {
+                boxCollider.enabled = false;
+            }
+
+            bodyCollider = capsule;
+            return;
+        }
+
+        if (boxCollider == null)
+        {
+            bodyCollider = GetComponent<Collider2D>();
+            return;
+        }
+
+        capsule = gameObject.AddComponent<CapsuleCollider2D>();
+        capsule.size = new Vector2(boxCollider.size.x * 0.82f, boxCollider.size.y * 0.96f);
+        capsule.direction = CapsuleDirection2D.Vertical;
+        capsule.offset = boxCollider.offset;
+        boxCollider.enabled = false;
+        bodyCollider = capsule;
+    }
+
+    private bool CheckGrounded()
+    {
+        if (bodyCollider == null)
+        {
+            return false;
+        }
+
+        Bounds bounds = bodyCollider.bounds;
+        Vector2 castSize = new Vector2(bounds.size.x * groundCheckWidthScale, bounds.size.y * 0.2f);
+        Vector2 origin = new Vector2(bounds.center.x, bounds.min.y + castSize.y * 0.5f);
+
+        RaycastHit2D hit = Physics2D.BoxCast(
+            origin,
+            castSize,
+            0f,
+            Vector2.down,
+            groundCheckDistance,
+            groundLayer);
+
+        return hit.collider != null && hit.normal.y >= minGroundNormalY;
     }
 
     void Update()
@@ -121,7 +183,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        bool groundedNow = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, 0.1f, groundLayer);
+        bool groundedNow = CheckGrounded();
 
         // A ground cast can still touch the floor for a frame immediately after
         // jumping. Ignore it until the player has genuinely left the ground,
@@ -234,11 +296,11 @@ public class PlayerController : MonoBehaviour
         filter.useTriggers = false;
         filter.useLayerMask = false;
 
-        int count = boxCollider.Overlap(filter, OverlapBuffer);
+        int count = bodyCollider.Overlap(filter, OverlapBuffer);
         for (int i = 0; i < count; i++)
         {
             Collider2D other = OverlapBuffer[i];
-            if (other != null && other.CompareTag("Pushable") && boxCollider.IsTouching(other))
+            if (other != null && other.CompareTag("Pushable") && bodyCollider.IsTouching(other))
             {
                 return true;
             }
@@ -256,11 +318,12 @@ public class PlayerController : MonoBehaviour
 
         // Keep the cast well above the feet. A full-height box hits the tiny
         // vertical seams between adjacent ground tiles and zeroes movement.
+        Bounds bounds = bodyCollider.bounds;
         Vector2 direction = new Vector2(Mathf.Sign(velocityX), 0f);
-        Vector2 castSize = boxCollider.bounds.size;
+        Vector2 castSize = bounds.size;
         castSize.x *= 0.9f;
         castSize.y *= 0.55f;
-        Vector2 origin = (Vector2)boxCollider.bounds.center + Vector2.up * (boxCollider.bounds.extents.y * 0.2f);
+        Vector2 origin = (Vector2)bounds.center + Vector2.up * (bounds.extents.y * 0.2f);
 
         RaycastHit2D hit = Physics2D.BoxCast(
             origin,
@@ -338,16 +401,17 @@ public class PlayerController : MonoBehaviour
         // preserve the double jump and execute a ground jump on contact.
         float predictedFallDistance =
             -rb.linearVelocity.y * jumpBufferTime + 0.1f;
-        Vector2 castSize = boxCollider.bounds.size * 0.95f;
+        Bounds bounds = bodyCollider.bounds;
+        Vector2 castSize = new Vector2(bounds.size.x * 0.9f, bounds.size.y * 0.95f);
         RaycastHit2D hit = Physics2D.BoxCast(
-            boxCollider.bounds.center,
+            bounds.center,
             castSize,
             0f,
             Vector2.down,
             predictedFallDistance,
             groundLayer);
 
-        return hit.collider != null;
+        return hit.collider != null && hit.normal.y >= minGroundNormalY;
     }
 
     public void OnMorph(InputValue value)
