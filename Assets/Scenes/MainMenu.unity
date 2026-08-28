@@ -257,6 +257,8 @@ MonoBehaviour:
   starSize: 26
   starSpacing: 6
   verticalOffset: -18
+  filledStarColor: {r: 1, g: 1, b: 1, a: 1}
+  emptyStarColor: {r: 0.62, g: 0.64, b: 0.68, a: 1}
 --- !u!1 &69575891
 GameObject:
   m_ObjectHideFlags: 0
@@ -533,6 +535,8 @@ MonoBehaviour:
   starSize: 26
   starSpacing: 6
   verticalOffset: -18
+  filledStarColor: {r: 1, g: 1, b: 1, a: 1}
+  emptyStarColor: {r: 0.62, g: 0.64, b: 0.68, a: 1}
 --- !u!1 &168052135
 GameObject:
   m_ObjectHideFlags: 0
@@ -1596,6 +1600,8 @@ MonoBehaviour:
   starSize: 26
   starSpacing: 6
   verticalOffset: -18
+  filledStarColor: {r: 1, g: 1, b: 1, a: 1}
+  emptyStarColor: {r: 0.62, g: 0.64, b: 0.68, a: 1}
 --- !u!1 &1231576703
 GameObject:
   m_ObjectHideFlags: 0
@@ -1872,6 +1878,8 @@ MonoBehaviour:
   starSize: 26
   starSpacing: 6
   verticalOffset: -18
+  filledStarColor: {r: 1, g: 1, b: 1, a: 1}
+  emptyStarColor: {r: 0.62, g: 0.64, b: 0.68, a: 1}
 --- !u!1 &1581936717
 GameObject:
   m_ObjectHideFlags: 0
@@ -2148,6 +2156,8 @@ MonoBehaviour:
   starSize: 26
   starSpacing: 6
   verticalOffset: -18
+  filledStarColor: {r: 1, g: 1, b: 1, a: 1}
+  emptyStarColor: {r: 0.62, g: 0.64, b: 0.68, a: 1}
 --- !u!1 &1778747591
 GameObject:
   m_ObjectHideFlags: 0
@@ -2424,6 +2434,8 @@ MonoBehaviour:
   starSize: 26
   starSpacing: 6
   verticalOffset: -18
+  filledStarColor: {r: 1, g: 1, b: 1, a: 1}
+  emptyStarColor: {r: 0.62, g: 0.64, b: 0.68, a: 1}
 --- !u!1 &2033996623
 GameObject:
   m_ObjectHideFlags: 0
@@ -2455,6 +2467,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   maxStarsPerLevel: 3
   mainMenuSceneIndex: 0
+  deathBeatDuration: 0.85
 --- !u!4 &2033996625
 Transform:
   m_ObjectHideFlags: 0
@@ -2506,7 +2519,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 63.369907, y: 323.10815}
+  m_AnchoredPosition: {x: 63.369907, y: 273}
   m_SizeDelta: {x: 1000, y: 164.2234}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2035927483
@@ -2529,17 +2542,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Mass Control
+  m_text: MASS CONTROL
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 8292986130934440167, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 0bfb1f34031e05b4b99aceac64b99e36, type: 2}
+  m_sharedMaterial: {fileID: 8292986130934440167, guid: 0bfb1f34031e05b4b99aceac64b99e36, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294425911
-  m_fontColor: {r: 0.21568629, g: 0.7411765, b: 0.9686275, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2556,8 +2569,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 100
-  m_fontSizeBase: 100
+  m_fontSize: 120
+  m_fontSizeBase: 120
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2595,7 +2608,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -166.16118, y: 0, z: 0, w: 0}
+  m_margin: {x: -166.16118, y: 0, z: 0, w: -73.00095}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2821,7 +2834,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -2785366349977813741, guid: 6978d09f6c860df4f96dcf0579cc638e, type: 3}
+  m_Sprite: {fileID: -8925298984365708323, guid: 2dbf294243530ea47824edc50647a5f7, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -4298,45 +4311,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2aa9b49af22cd0bf8ddff6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 3100000335}
-  m_FillRect: {fileID: 3100000323}
-  m_HandleRect: {fileID: 3100000333}
-  m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 1
-  m_WholeNumbers: 0
-  m_Value: 0.8
-  m_OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!222 &3100000303
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4880,45 +4854,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2aa9b49af22cd0bf8ddff6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 3100000535}
-  m_FillRect: {fileID: 3100000523}
-  m_HandleRect: {fileID: 3100000533}
-  m_Direction: 0
-  m_MinValue: 0
-  m_MaxValue: 1
-  m_WholeNumbers: 0
-  m_Value: 0.8
-  m_OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!222 &3100000503
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5468,7 +5403,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -8396620742268908803, guid: e611a675a7917ce44bc9365335ecf157, type: 3}
+  m_Sprite: {fileID: -6683912131142686010, guid: b851f93c81815334abcfb16b3e481e17, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
