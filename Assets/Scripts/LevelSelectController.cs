@@ -1,3 +1,6 @@
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -30,6 +33,13 @@ public class LevelSelectController : MonoBehaviour
 
     void OnEnable()
     {
+#if UNITY_EDITOR
+        if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+        {
+            return;
+        }
+#endif
+
         EnsureStarDisplays();
         RefreshLevelButtons();
 

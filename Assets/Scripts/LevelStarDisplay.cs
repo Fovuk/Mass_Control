@@ -1,3 +1,6 @@
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +22,13 @@ public class LevelStarDisplay : MonoBehaviour
 
     void OnEnable()
     {
+#if UNITY_EDITOR
+        if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+        {
+            return;
+        }
+#endif
+
         LoadSprites();
         BuildDisplay();
         ApplyLayout();

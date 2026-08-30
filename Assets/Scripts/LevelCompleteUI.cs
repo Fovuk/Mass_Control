@@ -11,6 +11,13 @@ public class LevelCompleteUI : MonoBehaviour
     [Header("Metin")]
     [SerializeField] private TextMeshProUGUI summaryText;
 
+    [Header("Yildizlar")]
+    [SerializeField] private Image[] starImages;
+    [SerializeField] private Sprite emptyStarSprite;
+    [SerializeField] private Sprite filledStarSprite;
+    [SerializeField] private Color filledStarColor = Color.white;
+    [SerializeField] private Color emptyStarColor = new Color(0.62f, 0.64f, 0.68f, 1f);
+
     [Header("Butonlar")]
     [SerializeField] private Button playAgainButton;
     [SerializeField] private Button nextLevelButton;
@@ -40,6 +47,8 @@ public class LevelCompleteUI : MonoBehaviour
         playAgainButton?.onClick.AddListener(OnPlayAgainClicked);
         nextLevelButton?.onClick.AddListener(OnNextLevelClicked);
         mainMenuButton?.onClick.AddListener(OnMainMenuClicked);
+
+        EnsureStarSpritesAssigned();
     }
 
     void Start()
@@ -78,6 +87,7 @@ public class LevelCompleteUI : MonoBehaviour
     {
         if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.LevelComplete)
         {
+            UpdateStarDisplay();
             UpdateSummaryText();
             UpdateNextLevelButton();
         }
@@ -98,9 +108,9 @@ public class LevelCompleteUI : MonoBehaviour
     private void ShowPanel()
     {
         SetPanelVisible(true);
+        UpdateStarDisplay();
         UpdateSummaryText();
         UpdateNextLevelButton();
-        Debug.Log("[LevelCompleteUI] Panel gosterildi.");
     }
 
     private void HidePanel()
@@ -121,6 +131,47 @@ public class LevelCompleteUI : MonoBehaviour
         panel.SetActive(visible);
     }
 
+    private void EnsureStarSpritesAssigned()
+    {
+        if (emptyStarSprite != null && filledStarSprite != null)
+        {
+            return;
+        }
+
+        emptyStarSprite ??= StarUiSprites.GetEmptyStar();
+        filledStarSprite ??= StarUiSprites.GetFilledStar();
+    }
+
+    private void UpdateStarDisplay()
+    {
+        if (starImages == null || starImages.Length == 0 || GameManager.Instance == null)
+        {
+            return;
+        }
+
+        EnsureStarSpritesAssigned();
+
+        if (emptyStarSprite == null || filledStarSprite == null)
+        {
+            return;
+        }
+
+        int collected = GameManager.Instance.CollectedStars;
+
+        for (int i = 0; i < starImages.Length; i++)
+        {
+            Image starImage = starImages[i];
+            if (starImage == null)
+            {
+                continue;
+            }
+
+            bool isFilled = i < collected;
+            starImage.sprite = isFilled ? filledStarSprite : emptyStarSprite;
+            starImage.color = isFilled ? filledStarColor : emptyStarColor;
+        }
+    }
+
     private void UpdateSummaryText()
     {
         if (summaryText == null || GameManager.Instance == null)
@@ -135,18 +186,24 @@ public class LevelCompleteUI : MonoBehaviour
             LocalizationManager.ApplyUiFont(nextLevelHintText);
         }
 
-        int collected = GameManager.Instance.CollectedStars;
-        int max = GameManager.Instance.MaxStarsPerLevel;
-        string summary = LocalizationManager.Format("stars_format", collected, max);
+        bool showUnlockRequirement = GameManager.Instance.HasNextLevel() &&
+            !GameManager.Instance.IsNextLevelUnlocked();
 
-        if (GameManager.Instance.HasNextLevel() && !GameManager.Instance.IsNextLevelUnlocked())
+        if (showUnlockRequirement)
         {
-            summary += "\n" + LocalizationManager.Format(
+            summaryText.gameObject.SetActive(true);
+            summaryText.rectTransform.anchoredPosition = new Vector2(0f, 30f);
+            summaryText.rectTransform.sizeDelta = new Vector2(640f, 60f);
+            summaryText.alignment = TextAlignmentOptions.Center;
+            summaryText.text = LocalizationManager.Format(
                 "unlock_requirement",
                 SaveManager.StarsRequiredToUnlockNextLevel);
         }
-
-        summaryText.text = summary;
+        else
+        {
+            summaryText.text = string.Empty;
+            summaryText.gameObject.SetActive(false);
+        }
     }
 
     private void UpdateNextLevelButton()
