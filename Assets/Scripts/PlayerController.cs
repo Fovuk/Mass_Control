@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     public float baseMoveSpeed = 8f;
     private float currentMoveSpeed;
     private float horizontalInput;
+    private float verticalInput;
 
     [Header("Hızlanma / Yavaşlama (Damping)")]
     [Tooltip("Yerde hedef hıza ulaşma ivmesi (birim/sn²). Yüksek = daha ani, düşük = daha kaygan.")]
@@ -37,6 +38,12 @@ public class PlayerController : MonoBehaviour
     public LayerMask groundLayer;
     private bool canDoubleJump;
     private float fallSpeed;
+
+    [Header("Asagi Hizli Dusus")]
+    [Tooltip("S tusuna havadayken basildiginda hedeflenen asagi hiz.")]
+    [SerializeField, Min(0.1f)] private float fastFallSpeed = 16f;
+    [Tooltip("Oyuncunun asagi hiza ne kadar cabuk ulasacagi.")]
+    [SerializeField, Min(0.1f)] private float fastFallAcceleration = 70f;
 
     [Header("Coyote Time / Jump Buffer")]
     [Tooltip("How long jumping remains allowed after walking off a ledge.")]
@@ -260,7 +267,19 @@ public class PlayerController : MonoBehaviour
             newVelocityX = 0f;
         }
 
-        rb.linearVelocity = new Vector2(newVelocityX, rb.linearVelocity.y);
+        float newVelocityY = rb.linearVelocity.y;
+        if (verticalInput < -InputDeadzone && !isGrounded && newVelocityY > -fastFallSpeed)
+        {
+            // Pressing down cancels upward momentum immediately, then starts a
+            // controlled fast fall without slowing an already faster descent.
+            newVelocityY = Mathf.Min(newVelocityY, 0f);
+            newVelocityY = Mathf.MoveTowards(
+                newVelocityY,
+                -fastFallSpeed,
+                fastFallAcceleration * Time.fixedDeltaTime);
+        }
+
+        rb.linearVelocity = new Vector2(newVelocityX, newVelocityY);
     }
 
     private float Damp(float currentVelocityX, float targetVelocityX)
@@ -341,6 +360,7 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 moveVector = value.Get<Vector2>();
         horizontalInput = moveVector.x;
+        verticalInput = moveVector.y;
     }
 
     public void OnJump(InputValue value)

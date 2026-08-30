@@ -8,34 +8,37 @@ public class MovingPlatform : MonoBehaviour
     [SerializeField] private Transform pointB;
 
     [Header("Ayarlar")]
+    [Min(0.01f)]
     [SerializeField] private float speed = 2f;
     [SerializeField] private bool startAtPointA = true;
     [SerializeField] private bool waitAtEnds;
+    [Min(0f)]
     [SerializeField] private float waitTime = 0.5f;
 
     private Rigidbody2D rb;
-    private Transform target;
+    private bool movingToPointB;
     private float waitTimer;
 
-    void Awake()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.bodyType = RigidbodyType2D.Kinematic;
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
-        if (pointA == null || pointB == null)
+        if (!HasValidWaypoints())
         {
-            Debug.LogWarning($"{name}: pointA ve pointB atanmali.", this);
+            enabled = false;
             return;
         }
 
-        target = startAtPointA ? pointB : pointA;
+        movingToPointB = startAtPointA;
         rb.position = startAtPointA ? pointA.position : pointB.position;
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        if (pointA == null || pointB == null || target == null)
+        if (pointA == null || pointB == null)
         {
             return;
         }
@@ -46,21 +49,58 @@ public class MovingPlatform : MonoBehaviour
             return;
         }
 
-        Vector2 nextPosition = Vector2.MoveTowards(rb.position, target.position, speed * Time.fixedDeltaTime);
-        rb.MovePosition(nextPosition);
+        Vector2 targetPosition = movingToPointB ? pointB.position : pointA.position;
+        float maxDistance = speed * Time.fixedDeltaTime;
+        Vector2 currentPosition = rb.position;
 
-        if (Vector2.Distance(rb.position, target.position) < 0.01f)
+        if ((targetPosition - currentPosition).sqrMagnitude <= maxDistance * maxDistance)
         {
-            target = target == pointA ? pointB : pointA;
+            rb.MovePosition(targetPosition);
+            movingToPointB = !movingToPointB;
 
             if (waitAtEnds)
             {
                 waitTimer = waitTime;
             }
+
+            return;
         }
+
+        rb.MovePosition(Vector2.MoveTowards(currentPosition, targetPosition, maxDistance));
     }
 
-    void OnDrawGizmosSelected()
+    private bool HasValidWaypoints()
+    {
+        if (pointA == null || pointB == null)
+        {
+            Debug.LogError($"{name}: Point A ve Point B atanmali.", this);
+            return false;
+        }
+
+        if (pointA == pointB || (pointA.position - pointB.position).sqrMagnitude < 0.0001f)
+        {
+            Debug.LogError($"{name}: Point A ve Point B farkli konumlarda olmali.", this);
+            return false;
+        }
+
+        if (pointA.IsChildOf(transform) || pointB.IsChildOf(transform))
+        {
+            Debug.LogError(
+                $"{name}: Waypoint'ler moving spike'in child'i olamaz.",
+                this);
+            return false;
+        }
+
+        return true;
+    }
+
+    private void OnValidate()
+    {
+        speed = Mathf.Max(0.01f, speed);
+        waitTime = Mathf.Max(0f, waitTime);
+    }
+
+    private void OnDrawGizmosSelected()
     {
         if (pointA == null || pointB == null)
         {

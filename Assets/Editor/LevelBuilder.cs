@@ -16,11 +16,11 @@ public static class LevelBuilder
 
     static readonly string[] StripNames =
     {
-        "Grid", "Grid (1)", "Spikes", "Stars", "Moveable_Object", "FinishPortal", "Ground",
+        "Grid", "Grid (1)", "Spikes", "Stars", "Moveable_Object", "MoveableObject", "FinishPortal", "Ground",
         "Spike", "Spike (1)", "Star", "Star (1)", "Star (2)", "Star (3)", "Tilemap",
     };
 
-    static readonly string[] StripPrefixes = { "Moving_Spike", "Triangle" };
+    static readonly string[] StripPrefixes = { "Moving_Spike", "Triangle", "Moveable_Object", "MoveableObject" };
 
     [MenuItem("Tools/Build Levels 3-6")]
     public static void BuildAllLevelsMenu() => BuildAllLevels();
@@ -233,23 +233,20 @@ public static class LevelBuilder
         go.AddComponent<CollectibleStarSpin>();
     }
 
+    const string MoveableObjectPrefabPath = "Assets/Prefabs/MoveableObject.prefab";
+
     static void PlacePushable(Vector2 pos)
     {
-        var go = new GameObject("Moveable_Object");
-        go.tag = "Pushable";
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MoveableObjectPrefabPath);
+        if (prefab == null)
+        {
+            Debug.LogError($"[LevelBuilder] Missing prefab at {MoveableObjectPrefabPath}. Run Tools/Moveable Object/Create Or Update Prefab first.");
+            return;
+        }
+
+        var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        go.name = "MoveableObject";
         go.transform.position = new Vector3(pos.x, pos.y, 0f);
-        go.transform.localScale = new Vector3(9.64f, 9.43f, 1f);
-
-        go.AddComponent<PushableObject>();
-
-        var rb = go.AddComponent<Rigidbody2D>();
-        rb.mass = 12f;
-
-        var col = go.AddComponent<CircleCollider2D>();
-        col.radius = 0.5f;
-
-        var sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = LoadSprite("Assets/Free Platform Game Assets/Update 1.9/New Enemy/2x/Circle.png");
     }
 
     static void PlaceStaticSpike(Transform parent, Vector2 pos)
