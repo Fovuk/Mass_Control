@@ -67,6 +67,7 @@ public static class LevelBuilder
         BuildTilemap(def);
         PlaceGameplayObjects(def);
         AlignCamera(def.player);
+        DayAtmosphereController.ApplyToScene(scene, false);
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
