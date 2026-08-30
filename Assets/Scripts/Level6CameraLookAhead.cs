@@ -44,7 +44,8 @@ public class Level6CameraLookAhead : MonoBehaviour
 
     private void Awake()
     {
-        if (SceneManager.GetActiveScene().name != Level6SceneName)
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (sceneName != Level6SceneName)
         {
             enabled = false;
             return;
@@ -108,4 +109,5 @@ public class Level6CameraLookAhead : MonoBehaviour
         followOffset.x = currentOffsetX;
         cameraFollow.FollowOffset = followOffset;
     }
+
 }
