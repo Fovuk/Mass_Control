@@ -7,7 +7,8 @@ public class Level6CameraLookAhead : MonoBehaviour
     private const string Level6SceneName = "Level_06";
 
     [Header("Level 6 Camera")]
-    [SerializeField, Min(0f)] private float extraViewSize = 1.5f;
+    [Tooltip("Look-ahead only. Orthographic size sahne uzerindeki Cinemachine Lens degerinden okunur; runtime'da degistirilmez.")]
+    [SerializeField, Min(0f)] private float extraViewSize = 0f;
     [SerializeField, Min(0f)] private float maximumLookAhead = 4.5f;
     [SerializeField, Min(0f)] private float minimumLookAheadSpeed = 1.5f;
     [SerializeField, Min(0.01f)] private float fullLookAheadSpeed = 8f;
@@ -72,9 +73,14 @@ public class Level6CameraLookAhead : MonoBehaviour
         centeredOffsetX = cameraFollow.FollowOffset.x;
         currentOffsetX = centeredOffsetX;
 
-        LensSettings lens = virtualCamera.Lens;
-        lens.OrthographicSize += extraViewSize;
-        virtualCamera.Lens = lens;
+        // Orthographic size yalnizca sahne (ve dolayisiyla editör) uzerinden ayarlanir.
+        // Runtime'da buyutmek parallax arkaplanin editore gore kucuk gorunmesine yol aciyordu.
+        if (extraViewSize > 0f)
+        {
+            LensSettings lens = virtualCamera.Lens;
+            lens.OrthographicSize += extraViewSize;
+            virtualCamera.Lens = lens;
+        }
     }
 
     private void LateUpdate()

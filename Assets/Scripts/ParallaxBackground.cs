@@ -7,6 +7,7 @@ public class ParallaxBackground : MonoBehaviour
     private Camera worldCamera;
     private ParallaxLayer[] parallaxLayers;
     private bool initialized;
+    private Vector3 anchorOffset;
 
     private void LateUpdate()
     {
@@ -23,14 +24,16 @@ public class ParallaxBackground : MonoBehaviour
 
         if (!initialized)
         {
+            // Editörde root'u kameraya göre nereye koyduysan o fark korunur.
+            anchorOffset = transform.position - cameraPosition;
+
             // Cinemachine bu LateUpdate'te kamerayi oturttuktan sonra kaydet.
-            RebakeChildrenToCamera(cameraPosition);
             CacheLayers(cameraPosition);
             initialized = true;
         }
 
-        // Root her frame kameranin gordugu XY'de kalsin.
-        transform.position = new Vector3(cameraPosition.x, cameraPosition.y, transform.position.z);
+        // Root kamerayla birlikte hareket eder; editör offset'i silinmez.
+        transform.position = cameraPosition + anchorOffset;
 
         if (parallaxLayers == null)
         {
@@ -40,23 +43,6 @@ public class ParallaxBackground : MonoBehaviour
         for (int i = 0; i < parallaxLayers.Length; i++)
         {
             parallaxLayers[i]?.ApplyParallax(cameraPosition);
-        }
-    }
-
-    private void RebakeChildrenToCamera(Vector3 cameraPosition)
-    {
-        int childCount = transform.childCount;
-        var worldPositions = new Vector3[childCount];
-        for (int i = 0; i < childCount; i++)
-        {
-            worldPositions[i] = transform.GetChild(i).position;
-        }
-
-        transform.position = new Vector3(cameraPosition.x, cameraPosition.y, transform.position.z);
-
-        for (int i = 0; i < childCount; i++)
-        {
-            transform.GetChild(i).position = worldPositions[i];
         }
     }
 

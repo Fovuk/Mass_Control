@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [DisallowMultipleComponent]
 public class CollectibleStarSpin : MonoBehaviour
@@ -19,30 +20,40 @@ public class CollectibleStarSpin : MonoBehaviour
         transform.Rotate(0f, 0f, signedSpeed * Time.deltaTime, Space.Self);
     }
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    static void AttachToCollectibleStars()
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    static void RegisterSceneCallback()
+    {
+        SceneManager.sceneLoaded -= AttachToCollectibleStars;
+        SceneManager.sceneLoaded += AttachToCollectibleStars;
+    }
+
+    static void AttachToCollectibleStars(Scene scene, LoadSceneMode mode)
     {
         GameObject[] stars = GameObject.FindGameObjectsWithTag("Star");
         for (int i = 0; i < stars.Length; i++)
         {
-            GameObject star = stars[i];
-            if (star == null || star.GetComponent<CollectibleStarSpin>() != null)
-            {
-                continue;
-            }
-
-            if (star.GetComponent<RectTransform>() != null)
-            {
-                continue;
-            }
-
-            Collider2D collider = star.GetComponent<Collider2D>();
-            if (collider == null || !collider.isTrigger)
-            {
-                continue;
-            }
-
-            star.AddComponent<CollectibleStarSpin>();
+            TryAttach(stars[i]);
         }
+    }
+
+    static void TryAttach(GameObject star)
+    {
+        if (star == null || star.GetComponent<CollectibleStarSpin>() != null)
+        {
+            return;
+        }
+
+        if (star.GetComponent<RectTransform>() != null)
+        {
+            return;
+        }
+
+        Collider2D collider = star.GetComponent<Collider2D>();
+        if (collider == null || !collider.isTrigger)
+        {
+            return;
+        }
+
+        star.AddComponent<CollectibleStarSpin>();
     }
 }

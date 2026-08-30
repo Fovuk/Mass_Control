@@ -18,7 +18,6 @@ public class ParallaxLayer : MonoBehaviour
     {
         BuildHorizontalTiles();
 
-        // Period in ParallaxBackground local space (root scale is 1).
         SpriteRenderer renderer = GetComponent<SpriteRenderer>();
         float spriteWidth = renderer != null && renderer.sprite != null
             ? renderer.sprite.bounds.size.x
@@ -34,7 +33,7 @@ public class ParallaxLayer : MonoBehaviour
     {
         if (!initialized)
         {
-            Initialize(cameraPosition);
+            return;
         }
 
         Vector3 cameraDelta = cameraPosition - initialCameraPosition;
@@ -42,12 +41,9 @@ public class ParallaxLayer : MonoBehaviour
         // X: parallax lag + wrap (infinite horizontal)
         float offsetX = Wrap(cameraDelta.x * (parallaxFactor - 1f), tileWidthRootSpace);
 
-        // Y: always lock to camera so the layer never reveals empty sky above/below.
-        float offsetY = 0f;
-
         transform.localPosition = new Vector3(
             initialLocalPosition.x + offsetX,
-            initialLocalPosition.y + offsetY,
+            initialLocalPosition.y,
             initialLocalPosition.z);
     }
 
@@ -64,7 +60,14 @@ public class ParallaxLayer : MonoBehaviour
             Transform child = transform.GetChild(i);
             if (child.name.EndsWith("_Tile"))
             {
-                DestroyImmediate(child.gameObject);
+                if (Application.isPlaying)
+                {
+                    Destroy(child.gameObject);
+                }
+                else
+                {
+                    DestroyImmediate(child.gameObject);
+                }
             }
         }
 
