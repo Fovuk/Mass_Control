@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class PlayerGameplay : MonoBehaviour
 {
@@ -47,6 +48,29 @@ public class PlayerGameplay : MonoBehaviour
 
             Debug.Log("[PlayerGameplay] Finish portal'a girildi.");
             GameManager.Instance.CompleteLevel();
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Tilemap tilemap = collision.collider.GetComponent<Tilemap>();
+        if (tilemap == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < collision.contactCount; i++)
+        {
+            ContactPoint2D contact = collision.GetContact(i);
+            Vector2 pointInsideTile = contact.point - contact.normal * 0.05f;
+            Vector3Int cell = tilemap.WorldToCell(pointInsideTile);
+            TileBase touchedTile = tilemap.GetTile(cell);
+
+            if (touchedTile != null && touchedTile.name.StartsWith("SpikeTile"))
+            {
+                GameManager.Instance?.PlayerDied();
+                return;
+            }
         }
     }
 
