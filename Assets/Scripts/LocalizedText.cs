@@ -1,10 +1,17 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(TextMeshProUGUI))]
 public class LocalizedText : MonoBehaviour
 {
+    private static readonly HashSet<string> PreserveSceneFontKeys = new()
+    {
+        "game_title",
+    };
+
     [SerializeField] private string localizationKey;
+    [SerializeField] private bool preserveSceneFont;
 
     private TextMeshProUGUI label;
 
@@ -49,7 +56,9 @@ public class LocalizedText : MonoBehaviour
         }
 
         if (LocalizationManager.Instance != null &&
-            LocalizationManager.Instance.CurrentLanguage == GameLanguage.TR)
+            LocalizationManager.Instance.CurrentLanguage == GameLanguage.TR &&
+            !preserveSceneFont &&
+            !PreserveSceneFontKeys.Contains(localizationKey))
         {
             LocalizationManager.ApplyUiFont(label);
         }

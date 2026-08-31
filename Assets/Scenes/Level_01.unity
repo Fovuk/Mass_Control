@@ -155,7 +155,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -20}
+  m_AnchoredPosition: {x: 0, y: -120}
   m_SizeDelta: {x: 480, y: 84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &105240445
@@ -48982,16 +48982,6 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
-  - first: {x: 24, y: 6, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 1
-      m_TileSpriteIndex: 1
-      m_TileMatrixIndex: 1
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
   - first: {x: 89, y: 6, z: 0}
     second:
       serializedVersion: 2
@@ -57122,16 +57112,6 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
-  - first: {x: 24, y: 12, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 1
-      m_TileSpriteIndex: 1
-      m_TileMatrixIndex: 1
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
   - first: {x: 99, y: 12, z: 0}
     second:
       serializedVersion: 2
@@ -61458,16 +61438,6 @@ Tilemap:
       m_TileIndex: 14
       m_TileSpriteIndex: 14
       m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
-  - first: {x: 24, y: 15, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 1
-      m_TileSpriteIndex: 1
-      m_TileMatrixIndex: 1
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
@@ -76758,7 +76728,7 @@ Tilemap:
     m_RefCount: 203
     m_Data: {fileID: 11400000, guid: daed312ab27d1bf42bf109d47e945d1e, type: 2}
   - serializedVersion: 2
-    m_RefCount: 6
+    m_RefCount: 3
     m_Data: {fileID: 11400000, guid: f1a2b3c4d5e6478899aabbccddeeff04, type: 2}
   - serializedVersion: 2
     m_RefCount: 18
@@ -76804,7 +76774,7 @@ Tilemap:
     m_RefCount: 203
     m_Data: {fileID: 1144459613765650075, guid: 69833e278deb08d419f047e23fe5b9b8, type: 3}
   - serializedVersion: 2
-    m_RefCount: 6
+    m_RefCount: 3
     m_Data: {fileID: -5415621613548852526, guid: 67cdce2bacc747d49be05af3549571a8, type: 3}
   - serializedVersion: 2
     m_RefCount: 18
@@ -76866,7 +76836,7 @@ Tilemap:
       e32: 0
       e33: 1
   - serializedVersion: 2
-    m_RefCount: 6
+    m_RefCount: 3
     m_Data:
       e00: 0.78125
       e01: 0
@@ -76886,7 +76856,7 @@ Tilemap:
       e33: 1
   m_TileColorArray:
   - serializedVersion: 2
-    m_RefCount: 7385
+    m_RefCount: 7382
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
@@ -78599,7 +78569,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -120}
+  m_AnchoredPosition: {x: 0, y: -20}
   m_SizeDelta: {x: 480, y: 84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1403782555
@@ -79184,7 +79154,7 @@ GameObject:
   - component: {fileID: 1667154220}
   - component: {fileID: 1667154219}
   - component: {fileID: 1667154218}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Moveable_Object (1)
   m_TagString: Pushable
   m_Icon: {fileID: 0}
@@ -80598,6 +80568,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: jump
+  preserveSceneFont: 0
 --- !u!114 &9200000002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80611,6 +80582,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: next_level
+  preserveSceneFont: 0
 --- !u!114 &9200000003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80624,6 +80596,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: level_complete
+  preserveSceneFont: 0
 --- !u!114 &9200000004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80637,6 +80610,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: main_menu
+  preserveSceneFont: 0
 --- !u!114 &9200000005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80650,6 +80624,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: play_again
+  preserveSceneFont: 0
 --- !u!114 &9200000006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80663,6 +80638,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: morph
+  preserveSceneFont: 0
 --- !u!1 &9200000100
 GameObject:
   m_ObjectHideFlags: 0

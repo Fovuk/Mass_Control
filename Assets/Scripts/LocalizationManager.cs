@@ -18,7 +18,7 @@ public class LocalizationManager : MonoBehaviour
 
     private static readonly Dictionary<string, string[]> Translations = new Dictionary<string, string[]>
     {
-        { "game_title", new[] { "Mass Control", "Mass Control" } },
+        { "game_title", new[] { "MASS CONTROL", "MASS CONTROL" } },
         { "settings", new[] { "Ayarlar", "Settings" } },
         { "language", new[] { "Dil", "Language" } },
         { "music", new[] { "Müzik", "Music" } },

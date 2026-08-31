@@ -146266,7 +146266,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -120}
+  m_AnchoredPosition: {x: 0, y: -20}
   m_SizeDelta: {x: 480, y: 84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &960246296
@@ -147297,7 +147297,7 @@ GameObject:
   - component: {fileID: 1471395315}
   - component: {fileID: 1471395314}
   - component: {fileID: 1471395313}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Moveable_Object (2)
   m_TagString: Pushable
   m_Icon: {fileID: 0}
@@ -148658,7 +148658,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -20}
+  m_AnchoredPosition: {x: 0, y: -120}
   m_SizeDelta: {x: 480, y: 84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1993812058
@@ -149331,6 +149331,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: level_complete
+  preserveSceneFont: 0
 --- !u!114 &9200000002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149344,6 +149345,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: next_level
+  preserveSceneFont: 0
 --- !u!114 &9200000003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149357,6 +149359,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: jump
+  preserveSceneFont: 0
 --- !u!114 &9200000004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149370,6 +149373,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: main_menu
+  preserveSceneFont: 0
 --- !u!114 &9200000005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149383,6 +149387,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: play_again
+  preserveSceneFont: 0
 --- !u!114 &9200000006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149396,6 +149401,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: morph
+  preserveSceneFont: 0
 --- !u!114 &9200100003
 MonoBehaviour:
   m_ObjectHideFlags: 0
