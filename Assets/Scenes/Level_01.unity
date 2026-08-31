@@ -718,7 +718,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &377041338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1642,6 +1642,7 @@ GameObject:
   - component: {fileID: 498272005}
   - component: {fileID: 498272004}
   - component: {fileID: 498272003}
+  - component: {fileID: 498272006}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: Untagged
@@ -1726,6 +1727,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &498272006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 498272002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbf27df9ea569d94899e1d02c2e5edb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelCameraGroundLook
+  groundedLookUpOffset: 2.25
+  groundedTransitionTime: 1.6
+  airborneReturnTime: 1.2
+  maximumVerticalSpeed: 1.25
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

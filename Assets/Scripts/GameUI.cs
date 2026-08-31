@@ -1,6 +1,10 @@
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.UI;
 
+[ExecuteAlways]
 [DefaultExecutionOrder(100)]
 public class GameUI : MonoBehaviour
 {
@@ -14,13 +18,38 @@ public class GameUI : MonoBehaviour
 
     private Image[] starImages;
 
+    void OnEnable()
+    {
+#if UNITY_EDITOR
+        if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+        {
+            return;
+        }
+#endif
+
+        LoadSpritesIfNeeded();
+
+        if (!Application.isPlaying)
+        {
+            EnsureEditorPreview();
+        }
+    }
+
     void Awake()
     {
-        LoadSpritesIfNeeded();
+        if (Application.isPlaying)
+        {
+            LoadSpritesIfNeeded();
+        }
     }
 
     void Start()
     {
+        if (!Application.isPlaying)
+        {
+            return;
+        }
+
         BuildStarDisplay();
 
         if (GameManager.Instance == null)
@@ -38,13 +67,34 @@ public class GameUI : MonoBehaviour
 
     void OnDestroy()
     {
-        if (GameManager.Instance == null)
+        if (!Application.isPlaying || GameManager.Instance == null)
         {
             return;
         }
 
         GameManager.Instance.OnStarsChanged -= HandleStarsChanged;
         GameManager.Instance.OnGameStateChanged -= HandleGameStateChanged;
+    }
+
+    private void EnsureEditorPreview()
+    {
+        if (emptyStarSprite == null || filledStarSprite == null)
+        {
+            return;
+        }
+
+        HideLegacyStarText();
+
+        Transform existingDisplay = transform.Find("StarDisplay");
+        if (existingDisplay != null)
+        {
+            CacheStarImages(existingDisplay);
+            ApplyStarVisuals(0);
+            return;
+        }
+
+        CreateStarDisplay(starCount: 3, editorPreview: true);
+        ApplyStarVisuals(0);
     }
 
     private void LoadSpritesIfNeeded()
@@ -72,21 +122,28 @@ public class GameUI : MonoBehaviour
         }
 
         Transform existingDisplay = transform.Find("StarDisplay");
-        Transform legacyStarText = transform.Find("StarText");
         if (existingDisplay != null)
         {
-            Destroy(existingDisplay.gameObject);
+            DestroyObject(existingDisplay.gameObject);
         }
 
-        if (legacyStarText != null)
-        {
-            legacyStarText.gameObject.SetActive(false);
-        }
+        HideLegacyStarText();
 
         int starCount = GameManager.Instance != null ? GameManager.Instance.MaxStarsPerLevel : 3;
+        CreateStarDisplay(starCount, editorPreview: false);
+    }
+
+    private void CreateStarDisplay(int starCount, bool editorPreview)
+    {
+        Transform legacyStarText = transform.Find("StarText");
 
         GameObject container = new GameObject("StarDisplay", typeof(RectTransform));
         container.transform.SetParent(transform, false);
+
+        if (editorPreview)
+        {
+            container.hideFlags = HideFlags.DontSave;
+        }
 
         RectTransform containerRect = container.GetComponent<RectTransform>();
         if (legacyStarText is RectTransform legacyRect)
@@ -119,6 +176,11 @@ public class GameUI : MonoBehaviour
             GameObject starObject = new GameObject($"Star_{i + 1}", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             starObject.transform.SetParent(container.transform, false);
 
+            if (editorPreview)
+            {
+                starObject.hideFlags = HideFlags.DontSave;
+            }
+
             RectTransform starRect = starObject.GetComponent<RectTransform>();
             starRect.sizeDelta = new Vector2(starSize, starSize);
 
@@ -132,7 +194,21 @@ public class GameUI : MonoBehaviour
         }
     }
 
-    private void HandleStarsChanged(int collected, int max)
+    private void HideLegacyStarText()
+    {
+        Transform legacyStarText = transform.Find("StarText");
+        if (legacyStarText != null)
+        {
+            legacyStarText.gameObject.SetActive(false);
+        }
+    }
+
+    private void CacheStarImages(Transform display)
+    {
+        starImages = display.GetComponentsInChildren<Image>(true);
+    }
+
+    private void ApplyStarVisuals(int collected)
     {
         if (starImages == null)
         {
@@ -152,9 +228,31 @@ public class GameUI : MonoBehaviour
         }
     }
 
+    private void HandleStarsChanged(int collected, int max)
+    {
+        ApplyStarVisuals(collected);
+    }
+
     private void HandleGameStateChanged(GameState state)
     {
         // Menu, pause, level complete ekranlari burada yonetilebilir.
+    }
+
+    private void DestroyObject(GameObject obj)
+    {
+        if (obj == null)
+        {
+            return;
+        }
+
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            DestroyImmediate(obj);
+            return;
+        }
+#endif
+        Destroy(obj);
     }
 
     private static void CopyRectTransform(RectTransform source, RectTransform target)
