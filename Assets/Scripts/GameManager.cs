@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
         EnsureSfxManager();
         DeathScreenEffect.EnsureOn(this);
         LevelWakeUpEffect.EnsureOn(this);
+        LevelIntroTitle.EnsureOn(this);
     }
 
     private void EnsureSfxManager()
