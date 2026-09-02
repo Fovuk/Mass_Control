@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,6 +21,7 @@ public class LevelIntroTitle : MonoBehaviour
     private TextMeshProUGUI titleShadowLabel;
     private Image backdrop;
     private Coroutine introRoutine;
+    private static bool skipNextIntro;
 
     public static void EnsureOn(GameManager manager)
     {
@@ -31,10 +33,21 @@ public class LevelIntroTitle : MonoBehaviour
         manager.gameObject.AddComponent<LevelIntroTitle>();
     }
 
+    public static void RequestSkipOnNextLoad()
+    {
+        skipNextIntro = true;
+    }
+
     void Start()
     {
         if (SceneManager.GetActiveScene().buildIndex <= 0)
         {
+            return;
+        }
+
+        if (skipNextIntro)
+        {
+            skipNextIntro = false;
             return;
         }
 
@@ -118,10 +131,48 @@ public class LevelIntroTitle : MonoBehaviour
         string subtitle = LocalizationManager.Format("level_intro_format", levelNumber);
         string title = LocalizationManager.Get($"level_name_{levelNumber}");
 
+        if (LocalizationManager.Instance != null &&
+            LocalizationManager.Instance.CurrentLanguage == GameLanguage.TR)
+        {
+            subtitle = ToFontSafeAscii(subtitle);
+            title = ToFontSafeAscii(title);
+        }
+
         ApplyFonts();
         subtitleLabel.text = subtitle;
         titleLabel.text = title;
         titleShadowLabel.text = title;
+    }
+
+    private static string ToFontSafeAscii(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+        {
+            return text;
+        }
+
+        var builder = new StringBuilder(text.Length);
+        foreach (char character in text)
+        {
+            builder.Append(character switch
+            {
+                'İ' => 'I',
+                'ı' => 'i',
+                'Ğ' => 'G',
+                'ğ' => 'g',
+                'Ü' => 'U',
+                'ü' => 'u',
+                'Ş' => 'S',
+                'ş' => 's',
+                'Ö' => 'O',
+                'ö' => 'o',
+                'Ç' => 'C',
+                'ç' => 'c',
+                _ => character
+            });
+        }
+
+        return builder.ToString();
     }
 
     private void ApplyFonts()

@@ -208,6 +208,7 @@ public class GameManager : MonoBehaviour
     public void DieAndRestart()
     {
         Time.timeScale = 1f;
+        LevelIntroTitle.RequestSkipOnNextLoad();
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadScene(currentSceneIndex);
     }
