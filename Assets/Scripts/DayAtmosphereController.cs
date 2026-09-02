@@ -33,9 +33,7 @@ public static class DayAtmosphereController
             out Color tileTint,
             out float lightIntensity);
 
-        foreach (Light2D light in Object.FindObjectsByType<Light2D>(
-                     FindObjectsInactive.Include,
-                     FindObjectsSortMode.None))
+        foreach (Light2D light in Object.FindObjectsByType<Light2D>(FindObjectsInactive.Include))
         {
             if (light.gameObject.scene == scene &&
                 light.lightType == Light2D.LightType.Global)
@@ -45,9 +43,7 @@ public static class DayAtmosphereController
             }
         }
 
-        foreach (Camera camera in Object.FindObjectsByType<Camera>(
-                     FindObjectsInactive.Include,
-                     FindObjectsSortMode.None))
+        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include))
         {
             if (camera.gameObject.scene == scene)
             {
@@ -55,9 +51,7 @@ public static class DayAtmosphereController
             }
         }
 
-        foreach (Tilemap tilemap in Object.FindObjectsByType<Tilemap>(
-                     FindObjectsInactive.Include,
-                     FindObjectsSortMode.None))
+        foreach (Tilemap tilemap in Object.FindObjectsByType<Tilemap>(FindObjectsInactive.Include))
         {
             if (tilemap.gameObject.scene == scene)
             {
@@ -65,9 +59,7 @@ public static class DayAtmosphereController
             }
         }
 
-        foreach (SpriteRenderer renderer in Object.FindObjectsByType<SpriteRenderer>(
-                     FindObjectsInactive.Include,
-                     FindObjectsSortMode.None))
+        foreach (SpriteRenderer renderer in Object.FindObjectsByType<SpriteRenderer>(FindObjectsInactive.Include))
         {
             if (renderer.gameObject.scene != scene)
             {
@@ -120,9 +112,7 @@ public static class DayAtmosphereController
 
     private static void AddLocalHighlights(Scene scene)
     {
-        foreach (SpriteRenderer renderer in Object.FindObjectsByType<SpriteRenderer>(
-                     FindObjectsInactive.Include,
-                     FindObjectsSortMode.None))
+        foreach (SpriteRenderer renderer in Object.FindObjectsByType<SpriteRenderer>(FindObjectsInactive.Include))
         {
             if (renderer.gameObject.scene != scene)
             {

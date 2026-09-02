@@ -6,7 +6,7 @@ using UnityEngine.InputSystem.OnScreen;
 public class VirtualJoystick : OnScreenControl, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
     [InputControl(layout = "Vector2")]
-    [SerializeField] private string controlPath = "<Gamepad>/leftStick";
+    [SerializeField] private new string controlPath = "<Gamepad>/leftStick";
 
     [SerializeField] private RectTransform handle;
     [SerializeField] private float movementRange = 50f;
