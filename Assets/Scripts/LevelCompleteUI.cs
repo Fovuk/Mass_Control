@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +11,7 @@ public class LevelCompleteUI : MonoBehaviour
 
     [Header("Metin")]
     [SerializeField] private TextMeshProUGUI summaryText;
+    [SerializeField] private GameObject titleObject;
 
     [Header("Yildizlar")]
     [SerializeField] private Image[] starImages;
@@ -26,6 +28,9 @@ public class LevelCompleteUI : MonoBehaviour
 
     private CanvasGroup panelCanvasGroup;
     private bool hideWithCanvasGroup;
+    private Coroutine languageRefreshRoutine;
+
+    private static readonly Color UnlockRequirementColor = new Color(0.42f, 0.46f, 0.52f, 1f);
 
     void Awake()
     {
@@ -48,7 +53,28 @@ public class LevelCompleteUI : MonoBehaviour
         nextLevelButton?.onClick.AddListener(OnNextLevelClicked);
         mainMenuButton?.onClick.AddListener(OnMainMenuClicked);
 
+        EnsureTitleReference();
         EnsureStarSpritesAssigned();
+    }
+
+    private void EnsureTitleReference()
+    {
+        if (titleObject != null || panel == null)
+        {
+            return;
+        }
+
+        Transform completeCard = panel.transform.Find("CompleteCard");
+        if (completeCard == null)
+        {
+            completeCard = panel.transform;
+        }
+
+        Transform title = completeCard.Find("Title");
+        if (title != null)
+        {
+            titleObject = title.gameObject;
+        }
     }
 
     void Start()
@@ -68,6 +94,12 @@ public class LevelCompleteUI : MonoBehaviour
 
     void OnDestroy()
     {
+        if (languageRefreshRoutine != null)
+        {
+            StopCoroutine(languageRefreshRoutine);
+            languageRefreshRoutine = null;
+        }
+
         if (LocalizationManager.Instance != null)
         {
             LocalizationManager.Instance.OnLanguageChanged -= HandleLanguageChanged;
@@ -87,10 +119,20 @@ public class LevelCompleteUI : MonoBehaviour
     {
         if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.LevelComplete)
         {
-            UpdateStarDisplay();
-            UpdateSummaryText();
-            UpdateNextLevelButton();
+            if (languageRefreshRoutine != null)
+            {
+                StopCoroutine(languageRefreshRoutine);
+            }
+
+            languageRefreshRoutine = StartCoroutine(RefreshAfterLanguageChange());
         }
+    }
+
+    private IEnumerator RefreshAfterLanguageChange()
+    {
+        yield return null;
+        RefreshPanelContent();
+        languageRefreshRoutine = null;
     }
 
     private void HandleGameStateChanged(GameState state)
@@ -108,9 +150,39 @@ public class LevelCompleteUI : MonoBehaviour
     private void ShowPanel()
     {
         SetPanelVisible(true);
+        RefreshPanelContent();
+    }
+
+    private void RefreshPanelContent()
+    {
+        UpdateTitleVisibility();
         UpdateStarDisplay();
         UpdateSummaryText();
         UpdateNextLevelButton();
+    }
+
+    private bool EarnedEnoughStarsThisRun()
+    {
+        if (GameManager.Instance == null)
+        {
+            return false;
+        }
+
+        return GameManager.Instance.CollectedStars >= GameManager.Instance.MaxStarsPerLevel;
+    }
+
+    private bool ShouldShowNextLevelButton()
+    {
+        return GameManager.Instance != null &&
+            GameManager.Instance.HasNextLevel() &&
+            EarnedEnoughStarsThisRun();
+    }
+
+    private bool ShouldShowUnlockRequirement()
+    {
+        return GameManager.Instance != null &&
+            GameManager.Instance.HasNextLevel() &&
+            !EarnedEnoughStarsThisRun();
     }
 
     private void HidePanel()
@@ -172,6 +244,14 @@ public class LevelCompleteUI : MonoBehaviour
         }
     }
 
+    private void UpdateTitleVisibility()
+    {
+        if (titleObject != null)
+        {
+            titleObject.SetActive(false);
+        }
+    }
+
     private void UpdateSummaryText()
     {
         if (summaryText == null || GameManager.Instance == null)
@@ -183,18 +263,17 @@ public class LevelCompleteUI : MonoBehaviour
             LocalizationManager.Instance.CurrentLanguage == GameLanguage.TR)
         {
             LocalizationManager.ApplyUiFont(summaryText);
-            LocalizationManager.ApplyUiFont(nextLevelHintText);
         }
 
-        bool showUnlockRequirement = GameManager.Instance.HasNextLevel() &&
-            !GameManager.Instance.IsNextLevelUnlocked();
-
-        if (showUnlockRequirement)
+        if (ShouldShowUnlockRequirement())
         {
             summaryText.gameObject.SetActive(true);
-            summaryText.rectTransform.anchoredPosition = new Vector2(0f, 30f);
-            summaryText.rectTransform.sizeDelta = new Vector2(640f, 60f);
+            summaryText.rectTransform.anchoredPosition = GetNextLevelSlotPosition();
+            summaryText.rectTransform.sizeDelta = new Vector2(640f, 84f);
             summaryText.alignment = TextAlignmentOptions.Center;
+            summaryText.fontSize = 28f;
+            summaryText.fontStyle = FontStyles.Italic;
+            summaryText.color = UnlockRequirementColor;
             summaryText.text = LocalizationManager.Format(
                 "unlock_requirement",
                 SaveManager.StarsRequiredToUnlockNextLevel);
@@ -206,6 +285,17 @@ public class LevelCompleteUI : MonoBehaviour
         }
     }
 
+    private Vector2 GetNextLevelSlotPosition()
+    {
+        if (nextLevelButton != null &&
+            nextLevelButton.TryGetComponent(out RectTransform nextLevelRect))
+        {
+            return nextLevelRect.anchoredPosition;
+        }
+
+        return new Vector2(0f, -20f);
+    }
+
     private void UpdateNextLevelButton()
     {
         if (GameManager.Instance == null)
@@ -213,29 +303,17 @@ public class LevelCompleteUI : MonoBehaviour
             return;
         }
 
-        bool canLoadNextLevel = GameManager.Instance.CanLoadNextLevel();
+        bool showNextLevelButton = ShouldShowNextLevelButton();
 
         if (nextLevelButton != null)
         {
-            nextLevelButton.interactable = canLoadNextLevel;
+            nextLevelButton.gameObject.SetActive(showNextLevelButton);
+            nextLevelButton.interactable = showNextLevelButton;
         }
 
         if (nextLevelHintText != null)
         {
-            if (!GameManager.Instance.HasNextLevel())
-            {
-                nextLevelHintText.text = string.Empty;
-            }
-            else if (canLoadNextLevel)
-            {
-                nextLevelHintText.text = string.Empty;
-            }
-            else
-            {
-                nextLevelHintText.text = LocalizationManager.Format(
-                    "unlock_hint",
-                    SaveManager.StarsRequiredToUnlockNextLevel);
-            }
+            nextLevelHintText.text = string.Empty;
         }
     }
 

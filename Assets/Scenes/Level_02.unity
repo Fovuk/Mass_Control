@@ -145994,7 +145994,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.000014841557, y: 0.00000023841858}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -146004,7 +146004,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.51, y: 5.11}
   m_EdgeRadius: 0
 --- !u!212 &900728747
 SpriteRenderer:
@@ -146115,6 +146115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelCompleteUI
   panel: {fileID: 163882620}
   summaryText: {fileID: 2100526254}
+  titleObject: {fileID: 0}
   starImages: []
   emptyStarSprite: {fileID: 0}
   filledStarSprite: {fileID: 0}
