@@ -14,21 +14,39 @@ public class PlayerLandingJuice : MonoBehaviour
     [Header("Landing Dust")]
     [SerializeField] private bool enableLandingDust = true;
     [SerializeField] private Color dustColor = new Color(0.86f, 0.82f, 0.72f, 0.75f);
-    [SerializeField, Range(1, 20)] private int landingParticleCount = 8;
+    [SerializeField, Range(1, 40)] private int landingParticleCount = 24;
     [SerializeField] private float minLandingImpact = 3f;
     [SerializeField] private float maxLandingImpact = 18f;
     [SerializeField] private Vector2 landingDustSpeed = new Vector2(0.8f, 1.8f);
+    [SerializeField] private Vector2 landingUpwardSpeed = new Vector2(0.2f, 0.8f);
+    [Tooltip("Inis tozunun oyuncunun iki yanina uzakligi.")]
+    [SerializeField, Range(0f, 1.5f)] private float landingSideOffset = 0.75f;
+    [SerializeField, Min(0f)] private float landingPositionJitter = 0.08f;
 
     [Header("Movement Dust")]
     [SerializeField] private bool enableMovementDust = true;
     [SerializeField] private float movementSpeedThreshold = 1.5f;
     [SerializeField, Min(0.03f)] private float movementDustInterval = 0.13f;
     [SerializeField, Range(1, 5)] private int movementParticleCount = 2;
+    [SerializeField, Range(0.1f, 2f)] private float movementDustStrength = 0.45f;
+    [Tooltip("Yuruyus tozunun hareket yonunun arkasindaki uzakligi.")]
+    [SerializeField, Range(0f, 1.5f)] private float movementTrailOffset = 0.55f;
 
     [Header("Dust Shape")]
     [SerializeField] private Vector2 particleLifetime = new Vector2(0.22f, 0.4f);
     [SerializeField] private Vector2 particleSize = new Vector2(0.12f, 0.28f);
     [SerializeField] private float footOffsetY = 0.02f;
+    [SerializeField, Range(0, 10)] private int particleSortingOffset = 1;
+    [SerializeField, Range(16, 256)] private int maximumParticles = 64;
+
+    [Header("Big Form Dust")]
+    [Tooltip("Buyuk formdaki partikül sayisi carpani.")]
+    [SerializeField, Range(1f, 3f)] private float bigParticleCountMultiplier = 1.5f;
+    [Tooltip("Buyuk formdaki partikül boyutu carpani.")]
+    [SerializeField, Range(1f, 2f)] private float bigParticleSizeMultiplier = 1.25f;
+    [SerializeField, Range(1f, 2f)] private float bigParticleSpeedMultiplier = 1.1f;
+    [SerializeField, Range(1f, 2f)] private float bigParticleLifetimeMultiplier = 1.15f;
+    [SerializeField, Range(1f, 2f)] private float bigLandingSpreadMultiplier = 1.2f;
 
     [Header("Subtle Landing Shake")]
     [SerializeField] private bool enableLandingShake = true;
@@ -50,6 +68,10 @@ public class PlayerLandingJuice : MonoBehaviour
         controller = GetComponent<PlayerController>();
         rb = GetComponent<Rigidbody2D>();
         bodyCollider = GetComponent<Collider2D>();
+        if (landingParticleCount == 8)
+        {
+            landingParticleCount = 24;
+        }
         dust = CreateDustSystem();
     }
 
@@ -78,7 +100,12 @@ public class PlayerLandingJuice : MonoBehaviour
 
     void Update()
     {
-        if (!enableMovementDust || !controller.IsGrounded)
+        if (!controller.IsGrounded)
+        {
+            return;
+        }
+
+        if (!enableMovementDust)
         {
             return;
         }
@@ -90,8 +117,12 @@ public class PlayerLandingJuice : MonoBehaviour
         }
 
         nextMovementDustTime = Time.time + movementDustInterval;
-        int count = Mathf.Max(1, Mathf.RoundToInt(movementParticleCount * dustIntensity));
-        EmitDust(count, 0.45f * dustIntensity, -Mathf.Sign(rb.linearVelocity.x));
+        int count = GetParticleCount(movementParticleCount * dustIntensity);
+        EmitDust(
+            count,
+            movementDustStrength * dustIntensity,
+            -Mathf.Sign(rb.linearVelocity.x),
+            false);
     }
 
     private void HandleLanded(float impactSpeed)
@@ -106,8 +137,14 @@ public class PlayerLandingJuice : MonoBehaviour
         {
             int count = Mathf.Max(
                 1,
-                Mathf.RoundToInt(landingParticleCount * dustIntensity * Mathf.Lerp(0.55f, 1f, impact)));
-            EmitDust(count, dustIntensity * Mathf.Lerp(0.7f, 1f, impact), 0f);
+                GetParticleCount(
+                    landingParticleCount *
+                    Mathf.Lerp(0.85f, 1.25f, impact)));
+            EmitDust(
+                count,
+                dustIntensity * Mathf.Lerp(0.7f, 1f, impact),
+                0f,
+                true);
         }
 
         if (enableLandingShake)
@@ -125,9 +162,27 @@ public class PlayerLandingJuice : MonoBehaviour
         }
     }
 
-    private void EmitDust(int count, float intensity, float directionBias)
+    private int GetParticleCount(float baseCount)
+    {
+        float multiplier = controller.IsBigForm
+            ? bigParticleCountMultiplier
+            : 1f;
+        return Mathf.Max(1, Mathf.RoundToInt(baseCount * multiplier));
+    }
+
+    private void EmitDust(
+        int count,
+        float intensity,
+        float directionBias,
+        bool landing)
     {
         if (dust == null)
+        {
+            return;
+        }
+
+        ResolveBodyCollider();
+        if (bodyCollider == null)
         {
             return;
         }
@@ -137,26 +192,65 @@ public class PlayerLandingJuice : MonoBehaviour
             dust.Play();
         }
 
-        dust.transform.position = new Vector3(
-            bodyCollider.bounds.center.x,
-            bodyCollider.bounds.min.y + footOffsetY,
+        Bounds bounds = bodyCollider.bounds;
+        Vector3 footPosition = new Vector3(
+            bounds.center.x,
+            bounds.min.y + footOffsetY,
             transform.position.z);
+        dust.transform.position = footPosition;
+
+        bool bigForm = controller.IsBigForm;
+        float sizeMultiplier = bigForm ? bigParticleSizeMultiplier : 1f;
+        float speedMultiplier = bigForm ? bigParticleSpeedMultiplier : 1f;
+        float lifetimeMultiplier = bigForm ? bigParticleLifetimeMultiplier : 1f;
+        float spreadMultiplier = bigForm ? bigLandingSpreadMultiplier : 1f;
 
         for (int i = 0; i < count; i++)
         {
-            float horizontal = directionBias == 0f
-                ? Random.Range(-1f, 1f)
-                : Mathf.Clamp(directionBias + Random.Range(-0.55f, 0.55f), -1f, 1f);
+            float horizontal;
+            float offsetX;
+            Vector2 upwardSpeed;
+
+            if (landing)
+            {
+                float side = i % 2 == 0 ? -1f : 1f;
+                horizontal = side * Random.Range(0.55f, 1f);
+                offsetX =
+                    side * bounds.extents.x * landingSideOffset * spreadMultiplier +
+                    Random.Range(-landingPositionJitter, landingPositionJitter);
+                upwardSpeed = landingUpwardSpeed;
+            }
+            else
+            {
+                horizontal = Mathf.Clamp(
+                    directionBias + Random.Range(-0.55f, 0.55f),
+                    -1f,
+                    1f);
+                offsetX =
+                    directionBias * bounds.extents.x * movementTrailOffset +
+                    Random.Range(-landingPositionJitter, landingPositionJitter);
+                upwardSpeed = new Vector2(0.2f, 0.8f);
+            }
 
             var particle = new ParticleSystem.EmitParams
             {
-                position = dust.transform.position,
+                position = footPosition + Vector3.right * offsetX,
                 velocity = new Vector3(
-                    horizontal * Random.Range(landingDustSpeed.x, landingDustSpeed.y) * intensity,
-                    Random.Range(0.2f, 0.8f) * intensity,
+                    horizontal *
+                    Random.Range(landingDustSpeed.x, landingDustSpeed.y) *
+                    intensity *
+                    speedMultiplier,
+                    Random.Range(upwardSpeed.x, upwardSpeed.y) *
+                    intensity *
+                    speedMultiplier,
                     0f),
-                startLifetime = Random.Range(particleLifetime.x, particleLifetime.y),
-                startSize = Random.Range(particleSize.x, particleSize.y) * intensity,
+                startLifetime =
+                    Random.Range(particleLifetime.x, particleLifetime.y) *
+                    lifetimeMultiplier,
+                startSize =
+                    Random.Range(particleSize.x, particleSize.y) *
+                    intensity *
+                    sizeMultiplier,
                 startColor = dustColor,
                 rotation = Random.Range(0f, Mathf.PI * 2f)
             };
@@ -175,7 +269,7 @@ public class PlayerLandingJuice : MonoBehaviour
         main.playOnAwake = false;
         main.loop = false;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.maxParticles = 48;
+        main.maxParticles = maximumParticles;
         main.gravityModifier = 0.15f;
 
         var emission = particles.emission;
@@ -214,10 +308,30 @@ public class PlayerLandingJuice : MonoBehaviour
         if (playerRenderer != null)
         {
             particleRenderer.sortingLayerID = playerRenderer.sortingLayerID;
-            particleRenderer.sortingOrder = playerRenderer.sortingOrder - 1;
+            particleRenderer.sortingOrder =
+                playerRenderer.sortingOrder + particleSortingOffset;
         }
 
         return particles;
+    }
+
+    private void ResolveBodyCollider()
+    {
+        if (bodyCollider != null && bodyCollider.enabled && !bodyCollider.isTrigger)
+        {
+            return;
+        }
+
+        foreach (Collider2D candidate in GetComponents<Collider2D>())
+        {
+            if (candidate.enabled && !candidate.isTrigger)
+            {
+                bodyCollider = candidate;
+                return;
+            }
+        }
+
+        bodyCollider = null;
     }
 
     private Material CreateDustMaterial()
