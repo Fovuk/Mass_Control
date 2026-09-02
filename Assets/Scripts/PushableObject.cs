@@ -16,6 +16,8 @@ public class PushableObject : MonoBehaviour
     [SerializeField] private float stopSpeedThreshold = 0.08f;
     [Tooltip("0 = pure physics friction. 1 = perfect no-slip roll (omega = v/r).")]
     [SerializeField, Range(0f, 1f)] private float rollingCoupling = 0.85f;
+    [SerializeField, Range(0f, 1f)] private float pushedFriction = 0.12f;
+    [SerializeField] private float bigPlayerPushAccel = 42f;
 
     private static readonly ContactPoint2D[] ContactBuffer = new ContactPoint2D[8];
 
@@ -24,6 +26,8 @@ public class PushableObject : MonoBehaviour
     private Collider2D[] colliders;
     private PlayerController player;
     private Collider2D playerCollider;
+    private PhysicsMaterial2D ballMaterial;
+    private PhysicsMaterial2D pushedMaterial;
     private float lockedPositionX;
     private bool hasLockedPositionX;
     private float smallBlockTimer;
@@ -41,19 +45,18 @@ public class PushableObject : MonoBehaviour
         lockedPositionX = rb.position.x;
         hasLockedPositionX = true;
 
-        var ballMaterial = new PhysicsMaterial2D("PushableBall")
+        ballMaterial = new PhysicsMaterial2D("PushableBall")
         {
             friction = rollFriction,
             bounciness = 0f
         };
-        rb.sharedMaterial = ballMaterial;
-        for (int i = 0; i < colliders.Length; i++)
+        pushedMaterial = new PhysicsMaterial2D("PushableBallPushed")
         {
-            if (colliders[i] != null)
-            {
-                colliders[i].sharedMaterial = ballMaterial;
-            }
-        }
+            friction = pushedFriction,
+            bounciness = 0f
+        };
+        rb.sharedMaterial = ballMaterial;
+        ApplyMaterial(ballMaterial);
 
         if (!CompareTag("Pushable"))
         {
@@ -64,9 +67,15 @@ public class PushableObject : MonoBehaviour
     void Start()
     {
         player = FindAnyObjectByType<PlayerController>();
-        if (player != null)
+        RefreshPlayerCollider();
+
+        if (groundLayer.value == 0)
         {
-            playerCollider = player.GetComponent<Collider2D>();
+            int groundMask = LayerMask.GetMask("Ground");
+            if (groundMask != 0)
+            {
+                groundLayer = groundMask;
+            }
         }
     }
 
@@ -74,6 +83,19 @@ public class PushableObject : MonoBehaviour
     {
         smallBlockTimer = Mathf.Max(0f, smallBlockTimer - Time.fixedDeltaTime);
         RefreshSmallBlockFromTouching();
+
+        bool playerDriving =
+            player != null && player.IsBigForm && playerCollider != null && IsTouchingPlayer();
+
+        if (playerDriving)
+        {
+            ReleaseForBigPlayer();
+            ApplyMaterial(pushedMaterial);
+        }
+        else
+        {
+            ApplyMaterial(ballMaterial);
+        }
 
         if (smallBlockTimer > 0f)
         {
@@ -90,18 +112,19 @@ public class PushableObject : MonoBehaviour
             rb.bodyType = RigidbodyType2D.Dynamic;
         }
 
-        bool playerDriving =
-            player != null && player.IsBigForm && playerCollider != null && IsTouchingPlayer();
         bool grounded = IsGrounded(out float groundNormalY);
         bool onFlatGround = grounded && groundNormalY >= flatGroundNormalY;
 
-        // Never freeze rotation — a ball must spin. Old "atRest" fired in mid-air
-        // because vertical falls have ~0 horizontal and angular speed.
         rb.constraints = RigidbodyConstraints2D.None;
 
         if (grounded)
         {
             ApplyRollingCoupling();
+        }
+
+        if (playerDriving)
+        {
+            ApplyBigPlayerPush();
         }
 
         bool horizontallyAtRest =
@@ -142,6 +165,31 @@ public class PushableObject : MonoBehaviour
 
         float targetAngular = (rb.linearVelocity.x / radius) * Mathf.Rad2Deg;
         rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, targetAngular, rollingCoupling);
+    }
+
+    private void ApplyBigPlayerPush()
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        // Use input intent, not measured velocity: collision resolution can pin
+        // the player against a frozen ball and drive HorizontalVelocity to ~0.
+        float targetVx = player.HasBigPushInput
+            ? player.BigPushTargetVelocity
+            : player.HorizontalVelocity;
+
+        if (Mathf.Abs(targetVx) < 0.05f)
+        {
+            return;
+        }
+
+        float newVx = Mathf.MoveTowards(
+            rb.linearVelocity.x,
+            targetVx,
+            bigPlayerPushAccel * Time.fixedDeltaTime);
+        rb.linearVelocity = new Vector2(newVx, rb.linearVelocity.y);
     }
 
     private float GetWorldRadius()
@@ -248,8 +296,14 @@ public class PushableObject : MonoBehaviour
     private void RegisterSmallPlayerCollision(Collision2D collision)
     {
         PlayerController hitPlayer = GetPlayerController(collision.collider);
-        if (hitPlayer == null || hitPlayer.IsBigForm)
+        if (hitPlayer == null)
         {
+            return;
+        }
+
+        if (hitPlayer.IsBigForm)
+        {
+            ReleaseForBigPlayer();
             return;
         }
 
@@ -264,22 +318,109 @@ public class PushableObject : MonoBehaviour
 
     private void RefreshSmallBlockFromTouching()
     {
-        if (player == null || playerCollider == null || player.IsBigForm || !IsTouchingPlayer())
+        if (player == null || playerCollider == null || !IsTouchingPlayer())
         {
+            return;
+        }
+
+        if (player.IsBigForm)
+        {
+            ReleaseForBigPlayer();
             return;
         }
 
         smallBlockTimer = smallBlockGrace;
     }
 
+    public void ReleaseForBigPlayer()
+    {
+        smallBlockTimer = 0f;
+
+        if (rb.bodyType != RigidbodyType2D.Dynamic)
+        {
+            rb.bodyType = RigidbodyType2D.Dynamic;
+        }
+
+        rb.constraints = RigidbodyConstraints2D.None;
+    }
+
+    private void ApplyMaterial(PhysicsMaterial2D material)
+    {
+        rb.sharedMaterial = material;
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            if (colliders[i] != null)
+            {
+                colliders[i].sharedMaterial = material;
+            }
+        }
+    }
+
+    private void RefreshPlayerCollider()
+    {
+        if (player == null)
+        {
+            playerCollider = null;
+            return;
+        }
+
+        playerCollider = player.BodyCollider;
+        if (playerCollider != null && playerCollider.enabled)
+        {
+            return;
+        }
+
+        Collider2D[] playerColliders = player.GetComponents<Collider2D>();
+        for (int i = 0; i < playerColliders.Length; i++)
+        {
+            Collider2D col = playerColliders[i];
+            if (col != null && col.enabled)
+            {
+                playerCollider = col;
+                return;
+            }
+        }
+    }
+
     private bool IsTouchingPlayer()
     {
+        if (playerCollider == null)
+        {
+            RefreshPlayerCollider();
+        }
+
+        if (playerCollider != null && playerCollider.enabled)
+        {
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                Collider2D col = colliders[i];
+                if (col != null && col.enabled && col.IsTouching(playerCollider))
+                {
+                    return true;
+                }
+            }
+        }
+
+        ContactFilter2D filter = new ContactFilter2D();
+        filter.useTriggers = false;
+        filter.useLayerMask = false;
+
         for (int i = 0; i < colliders.Length; i++)
         {
             Collider2D col = colliders[i];
-            if (col != null && col.enabled && col.IsTouching(playerCollider))
+            if (col == null || !col.enabled)
             {
-                return true;
+                continue;
+            }
+
+            int count = col.GetContacts(filter, ContactBuffer);
+            for (int j = 0; j < count; j++)
+            {
+                Collider2D other = ContactBuffer[j].collider;
+                if (other != null && other.enabled && other.CompareTag("Player"))
+                {
+                    return true;
+                }
             }
         }
 

@@ -5605,11 +5605,11 @@ MonoBehaviour:
   smallScale: {x: 1, y: 1, z: 1}
   smallMass: 1
   bigScale: {x: 2, y: 2, z: 2}
-  bigMass: 1e+10
+  bigMass: 150
   bigMoveSpeedMultiplier: 0.6
   bigMomentumMultiplier: 1.5
   smallMorphVelocityScale: 0.85
-  bigAcceleration: 18
+  bigAcceleration: 45
   bigMomentumDecay: 12
   wallCheckDistance: 0.08
   groundCheckDistance: 0.12

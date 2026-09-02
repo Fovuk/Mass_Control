@@ -1696,11 +1696,11 @@ MonoBehaviour:
   smallScale: {x: 1, y: 1, z: 1}
   smallMass: 1
   bigScale: {x: 2, y: 2, z: 2}
-  bigMass: 1e+10
+  bigMass: 150
   bigMoveSpeedMultiplier: 0.6
   bigMomentumMultiplier: 1.5
   smallMorphVelocityScale: 0.85
-  bigAcceleration: 18
+  bigAcceleration: 45
   bigMomentumDecay: 12
   wallCheckDistance: 0.08
   groundCheckDistance: 0.12
@@ -1918,13 +1918,25 @@ MonoBehaviour:
   minLandingImpact: 3
   maxLandingImpact: 18
   landingDustSpeed: {x: 0.8, y: 1.8}
+  landingUpwardSpeed: {x: 0.2, y: 0.8}
+  landingSideOffset: 0.75
+  landingPositionJitter: 0.08
   enableMovementDust: 1
   movementSpeedThreshold: 1.5
   movementDustInterval: 0.13
   movementParticleCount: 2
+  movementDustStrength: 0.45
+  movementTrailOffset: 0.55
   particleLifetime: {x: 0.22, y: 0.4}
   particleSize: {x: 0.12, y: 0.28}
   footOffsetY: 0.02
+  particleSortingOffset: 1
+  maximumParticles: 64
+  bigParticleCountMultiplier: 1.5
+  bigParticleSizeMultiplier: 1.25
+  bigParticleSpeedMultiplier: 1.1
+  bigParticleLifetimeMultiplier: 1.15
+  bigLandingSpreadMultiplier: 1.2
   enableLandingShake: 1
   shakeMagnitude: 0.05
   shakeDuration: 0.09

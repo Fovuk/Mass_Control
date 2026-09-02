@@ -60,17 +60,29 @@ public class PlayerController : MonoBehaviour
     public Vector3 smallScale = new Vector3(1f, 1f, 1f);
     public float smallMass = 1f;
     public Vector3 bigScale = new Vector3(2f, 2f, 2f);
-    public float bigMass = 999f;
+    public float bigMass = 150f;
 
     public bool IsBigForm => isBig;
 
+    public Collider2D BodyCollider => bodyCollider;
+
+    public float EffectiveBigMass => Mathf.Clamp(bigMass, smallMass + 1f, maxBigMass);
+
+    [SerializeField, Min(1f)] private float maxBigMass = 300f;
+
     public float HorizontalVelocity => rb != null ? rb.linearVelocity.x : 0f;
 
+    public float BigPushTargetVelocity =>
+        isBig ? horizontalInput * currentMoveSpeed : 0f;
+
+    public bool HasBigPushInput =>
+        isBig && Mathf.Abs(horizontalInput) > InputDeadzone;
+
     [Header("Büyük Form Momentum")]
-    [SerializeField] private float bigMoveSpeedMultiplier = 0.6f;
+    [SerializeField] private float bigMoveSpeedMultiplier = 0.65f;
     [SerializeField] private float bigMomentumMultiplier = 1.5f;
     [SerializeField] private float smallMorphVelocityScale = 0.85f;
-    [SerializeField] private float bigAcceleration = 18f;
+    [SerializeField] private float bigAcceleration = 45f;
     [SerializeField] private float bigMomentumDecay = 12f;
     [SerializeField] private float wallCheckDistance = 0.08f;
     [Header("Yer Algilama")]
@@ -446,8 +458,19 @@ public class PlayerController : MonoBehaviour
     {
         if (!isBig)
         {
+            float feetY = bodyCollider.bounds.min.y;
             transform.localScale = bigScale;
-            rb.mass = bigMass;
+            Physics2D.SyncTransforms();
+
+            float lift = feetY - bodyCollider.bounds.min.y;
+            if (lift > 0f)
+            {
+                rb.position += Vector2.up * lift;
+                Physics2D.SyncTransforms();
+            }
+
+            WakeTouchingPushables();
+            rb.mass = EffectiveBigMass;
             currentMoveSpeed = baseMoveSpeed * bigMoveSpeedMultiplier;
             isBig = true;
 
@@ -471,5 +494,28 @@ public class PlayerController : MonoBehaviour
         }
 
         SfxManager.Instance?.PlaySizeChange();
+    }
+
+    private void WakeTouchingPushables()
+    {
+        if (bodyCollider == null)
+        {
+            return;
+        }
+
+        ContactFilter2D filter = new ContactFilter2D();
+        filter.useTriggers = false;
+        filter.useLayerMask = false;
+
+        int count = bodyCollider.Overlap(filter, OverlapBuffer);
+        for (int i = 0; i < count; i++)
+        {
+            Collider2D other = OverlapBuffer[i];
+            if (other != null && other.CompareTag("Pushable") &&
+                other.TryGetComponent(out PushableObject pushable))
+            {
+                pushable.ReleaseForBigPlayer();
+            }
+        }
     }
 }
