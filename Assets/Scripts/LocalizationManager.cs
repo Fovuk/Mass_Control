@@ -38,7 +38,7 @@ public class LocalizationManager : MonoBehaviour
         { "level_name_6", new[] { "Son Sınır", "Grand Finale" } },
         { "level_complete", new[] { "Bölüm Tamamlandı!", "Level Complete!" } },
         { "stars_format", new[] { "Yıldız: {0}/{1}", "Stars: {0}/{1}" } },
-        { "unlock_requirement", new[] { "Sonraki bölüm için {0} yıldız gerekli.", "{0} stars required for next level." } },
+        { "unlock_requirement", new[] { "Sonraki bölüm için {0} yıldız gerekli.", "Collect all {0} stars to continue." } },
         { "unlock_hint", new[] { "{0} yıldız ile açılır", "Unlocks with {0} stars" } },
         { "next_level", new[] { "Sıradaki Bölüm", "Next Level" } },
         { "main_menu", new[] { "Ana Menü", "Main Menu" } },

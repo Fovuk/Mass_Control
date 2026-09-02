@@ -2677,6 +2677,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelCompleteUI
   panel: {fileID: 163882620}
   summaryText: {fileID: 2100526254}
+  titleObject: {fileID: 0}
   starImages: []
   emptyStarSprite: {fileID: 0}
   filledStarSprite: {fileID: 0}
@@ -3740,7 +3741,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 2.74, y: 5.28}
   m_EdgeRadius: 0
 --- !u!212 &1489091690
 SpriteRenderer:
@@ -17116,6 +17117,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: level_complete
+  preserveSceneFont: 0
 --- !u!114 &9200000002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17129,6 +17131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: next_level
+  preserveSceneFont: 0
 --- !u!114 &9200000003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17142,6 +17145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: jump
+  preserveSceneFont: 0
 --- !u!114 &9200000004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17155,6 +17159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: main_menu
+  preserveSceneFont: 0
 --- !u!114 &9200000005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17168,6 +17173,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: play_again
+  preserveSceneFont: 0
 --- !u!114 &9200000006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17181,6 +17187,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   localizationKey: morph
+  preserveSceneFont: 0
 --- !u!114 &9200100015
 MonoBehaviour:
   m_ObjectHideFlags: 0
