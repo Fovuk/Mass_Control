@@ -78055,14 +78055,13 @@ MonoBehaviour:
   smallMass: 1
   bigScale: {x: 2, y: 2, z: 2}
   bigMass: 150
+  maxBigMass: 300
   bigMoveSpeedMultiplier: 0.6
   bigMomentumMultiplier: 1.5
   smallMorphVelocityScale: 0.85
   bigAcceleration: 45
   bigMomentumDecay: 12
   wallCheckDistance: 0.08
-  morphSkinWidth: 0.03
-  morphResolveIterations: 8
   groundCheckDistance: 0.12
   groundCheckWidthScale: 0.55
   minGroundNormalY: 0.65
@@ -79455,6 +79454,8 @@ MonoBehaviour:
   flatGroundNormalY: 0.92
   stopSpeedThreshold: 0.12
   rollingCoupling: 0.85
+  pushedFriction: 0.12
+  bigPlayerPushAccel: 42
 --- !u!1 &1734702531
 GameObject:
   m_ObjectHideFlags: 0

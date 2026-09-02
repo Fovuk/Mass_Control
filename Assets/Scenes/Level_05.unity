@@ -2395,6 +2395,7 @@ MonoBehaviour:
   smallMass: 1
   bigScale: {x: 2, y: 2, z: 2}
   bigMass: 150
+  maxBigMass: 300
   bigMoveSpeedMultiplier: 0.6
   bigMomentumMultiplier: 1.5
   smallMorphVelocityScale: 0.85

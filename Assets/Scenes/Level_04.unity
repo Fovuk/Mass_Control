@@ -8188,6 +8188,7 @@ MonoBehaviour:
   smallMass: 1
   bigScale: {x: 2, y: 2, z: 2}
   bigMass: 150
+  maxBigMass: 300
   bigMoveSpeedMultiplier: 0.6
   bigMomentumMultiplier: 1.5
   smallMorphVelocityScale: 0.85
@@ -12289,6 +12290,8 @@ MonoBehaviour:
   flatGroundNormalY: 0.92
   stopSpeedThreshold: 0.12
   rollingCoupling: 0.85
+  pushedFriction: 0.12
+  bigPlayerPushAccel: 42
 --- !u!4 &2133846200
 Transform:
   m_ObjectHideFlags: 0
