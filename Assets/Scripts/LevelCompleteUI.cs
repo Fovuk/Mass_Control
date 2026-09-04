@@ -30,7 +30,7 @@ public class LevelCompleteUI : MonoBehaviour
     private bool hideWithCanvasGroup;
     private Coroutine languageRefreshRoutine;
 
-    private static readonly Color UnlockRequirementColor = new Color(0.42f, 0.46f, 0.52f, 1f);
+    private static readonly Color SummaryHintColor = new Color(0.28f, 0.34f, 0.42f, 1f);
 
     void Awake()
     {
@@ -137,7 +137,9 @@ public class LevelCompleteUI : MonoBehaviour
 
     private void HandleGameStateChanged(GameState state)
     {
-        if (state == GameState.LevelComplete)
+        if (state == GameState.LevelComplete &&
+            GameManager.Instance != null &&
+            !GameManager.Instance.IsFinalLevel())
         {
             ShowPanel();
         }
@@ -155,7 +157,7 @@ public class LevelCompleteUI : MonoBehaviour
 
     private void RefreshPanelContent()
     {
-        UpdateTitleVisibility();
+        UpdateTitle();
         UpdateStarDisplay();
         UpdateSummaryText();
         UpdateNextLevelButton();
@@ -178,7 +180,7 @@ public class LevelCompleteUI : MonoBehaviour
             EarnedEnoughStarsThisRun();
     }
 
-    private bool ShouldShowUnlockRequirement()
+    private bool NeedsMoreStarsForNextLevel()
     {
         return GameManager.Instance != null &&
             GameManager.Instance.HasNextLevel() &&
@@ -244,11 +246,30 @@ public class LevelCompleteUI : MonoBehaviour
         }
     }
 
-    private void UpdateTitleVisibility()
+    private void UpdateTitle()
     {
-        if (titleObject != null)
+        if (titleObject == null)
         {
-            titleObject.SetActive(false);
+            return;
+        }
+
+        titleObject.SetActive(true);
+
+        if (titleObject.TryGetComponent(out LocalizedText localizedTitle))
+        {
+            localizedTitle.SetKey("level_complete");
+            return;
+        }
+
+        if (titleObject.TryGetComponent(out TextMeshProUGUI titleLabel))
+        {
+            if (LocalizationManager.Instance != null &&
+                LocalizationManager.Instance.CurrentLanguage == GameLanguage.TR)
+            {
+                LocalizationManager.ApplyUiFont(titleLabel);
+            }
+
+            titleLabel.text = LocalizationManager.Get("level_complete");
         }
     }
 
@@ -265,15 +286,15 @@ public class LevelCompleteUI : MonoBehaviour
             LocalizationManager.ApplyUiFont(summaryText);
         }
 
-        if (ShouldShowUnlockRequirement())
+        if (NeedsMoreStarsForNextLevel())
         {
             summaryText.gameObject.SetActive(true);
             summaryText.rectTransform.anchoredPosition = GetNextLevelSlotPosition();
             summaryText.rectTransform.sizeDelta = new Vector2(640f, 84f);
             summaryText.alignment = TextAlignmentOptions.Center;
-            summaryText.fontSize = 28f;
-            summaryText.fontStyle = FontStyles.Italic;
-            summaryText.color = UnlockRequirementColor;
+            summaryText.fontSize = 30f;
+            summaryText.fontStyle = FontStyles.Normal;
+            summaryText.color = SummaryHintColor;
             summaryText.text = LocalizationManager.Format(
                 "unlock_requirement",
                 SaveManager.StarsRequiredToUnlockNextLevel);

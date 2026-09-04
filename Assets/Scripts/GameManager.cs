@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
         DeathScreenEffect.EnsureOn(this);
         LevelWakeUpEffect.EnsureOn(this);
         LevelIntroTitle.EnsureOn(this);
+        GameCompleteUI.EnsureOn(this);
     }
 
     private void EnsureSfxManager()
@@ -152,6 +153,11 @@ public class GameManager : MonoBehaviour
     public bool HasNextLevel()
     {
         return SceneManager.GetActiveScene().buildIndex + 1 < SceneManager.sceneCountInBuildSettings;
+    }
+
+    public bool IsFinalLevel()
+    {
+        return !HasNextLevel() && SceneManager.GetActiveScene().buildIndex > mainMenuSceneIndex;
     }
 
     public bool IsNextLevelUnlocked()
