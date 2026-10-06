@@ -1,63 +1,63 @@
 # MASS CONTROL
 
-Unity 2D platform / puzzle oyunu. Karakterin kütlesini ve boyutunu değiştirerek engelleri aş, kutuları it, yıldızları topla ve portala ulaş.
+A Unity 2D platform / puzzle game. Change your character’s mass and size to clear obstacles, push objects, collect stars, and reach the portal.
 
-![Bölüm seçimi](Docs/screenshots/level-select.jpeg)
+![Level select](Docs/screenshots/level-select.jpeg)
 
-## Oynanış
+## Gameplay
 
-- **Küçük form:** Hızlı hareket, çift zıplama, dar geçitlere girme.
-- **Büyük form:** Daha yavaş ama ağır; itilebilir nesneleri (boulder) hareket ettirme.
-- Her bölümde **3 yıldız** topla, **bitiş portalına** ulaş.
-- Tuzaklara (spike vb.) değersen bölüm yeniden başlar.
+- **Small form:** Fast movement, double jump, fit through narrow passages.
+- **Big form:** Slower but heavier; push movable objects (boulders).
+- Collect **3 stars** per level and reach the **finish portal**.
+- Touching traps (spikes, etc.) restarts the level.
 
-![Oynanış — Bölüm 1](Docs/screenshots/gameplay.jpeg)
+![Gameplay — Level 1](Docs/screenshots/gameplay.jpeg)
 
-## Kontroller
+## Controls
 
-| Kontroller | Aksiyon |
-|------------|---------|
-| Hareket (joystick / WASD / oklar) | Yatay hareket |
-| **Zıplama** | Zıpla (küçükken çift zıplama) |
-| **Boyut Değiştir** | Küçük ↔ büyük form |
+| Input | Action |
+|-------|--------|
+| Move (joystick / WASD / arrows) | Horizontal movement |
+| **Jump** | Jump (double jump while small) |
+| **Change Size** | Toggle small ↔ big form |
 
-## Özellikler
+## Features
 
-- Bölüm seçim ekranı (Bölüm 1–6) ve yıldız ilerlemesi
-- Morph (boyut / kütle) mekaniği
-- İtilebilir nesneler
-- Tilemap tabanlı seviyeler
-- Hareketli platform desteği
-- Loop’lu menü / oyun içi müzik ve SFX
-- Mobil uyumlu dokunmatik UI (joystick + butonlar)
+- Level select screen (Levels 1–6) with star progress
+- Morph (size / mass) mechanic
+- Pushable objects
+- Tilemap-based levels
+- Moving platform support
+- Looping menu / in-game music and SFX
+- Mobile-friendly touch UI (joystick + buttons)
 
-## Gereksinimler
+## Requirements
 
 - [Unity](https://unity.com/) **6000.x** (URP 2D)
-- Bu repo’yu açıp `Assets/Scenes/MainMenu.unity` ile başlat
+- Open this repo and start from `Assets/Scenes/MainMenu.unity`
 
-## Projeyi açma
+## Getting started
 
-1. Unity Hub → **Add** → bu klasörü seç
-2. Projeyi aç
-3. `Assets/Scenes/MainMenu.unity` sahnesini yükle
-4. Play
+1. Unity Hub → **Add** → select this folder
+2. Open the project
+3. Load `Assets/Scenes/MainMenu.unity`
+4. Press Play
 
-## Sahne yapısı
+## Scenes
 
-| Sahne | Açıklama |
-|-------|----------|
-| `MainMenu` | Ana menü / bölüm seçimi |
-| `Level_01` … `Level_06` | Oynanabilir bölümler |
+| Scene | Description |
+|-------|-------------|
+| `MainMenu` | Main menu / level select |
+| `Level_01` … `Level_06` | Playable levels |
 
-## Teknik notlar
+## Technical notes
 
 - Render: **Universal Render Pipeline (2D)**
 - Input: **Unity Input System**
-- Kamera: **Cinemachine**
-- Harita: **2D Tilemap**
-- Kayıt: yerel progress (`SaveManager`)
+- Camera: **Cinemachine**
+- Maps: **2D Tilemap**
+- Save: local progress (`SaveManager`)
 
-## Lisans / assetler
+## License / assets
 
-Oyun kodu bu repo’da. Kullanılan görseller üçüncü parti paketlerden gelebilir (ör. Free Platform Game Assets); ticari kullanımda paket lisanslarını kontrol et.
+Game code lives in this repo. Art may come from third-party packs (e.g. Free Platform Game Assets); check those licenses for commercial use.
