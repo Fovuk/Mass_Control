@@ -14,10 +14,12 @@ public class PushableObject : MonoBehaviour
     [SerializeField, Range(0.2f, 1f)] private float minGroundNormalY = 0.45f;
     [SerializeField, Range(0.7f, 1f)] private float flatGroundNormalY = 0.92f;
     [SerializeField] private float stopSpeedThreshold = 0.08f;
+    [Tooltip("After a push, wait this long at near-rest before locking X on flat ground.")]
+    [SerializeField] private float settleDelay = 0.45f;
     [Tooltip("0 = pure physics friction. 1 = perfect no-slip roll (omega = v/r).")]
     [SerializeField, Range(0f, 1f)] private float rollingCoupling = 0.85f;
     [SerializeField, Range(0f, 1f)] private float pushedFriction = 0.12f;
-    [SerializeField] private float bigPlayerPushAccel = 42f;
+    [SerializeField] private float bigPlayerPushAccel = 28f;
 
     private static readonly ContactPoint2D[] ContactBuffer = new ContactPoint2D[8];
 
@@ -31,6 +33,7 @@ public class PushableObject : MonoBehaviour
     private float lockedPositionX;
     private bool hasLockedPositionX;
     private float smallBlockTimer;
+    private float settleTimer;
 
     void Awake()
     {
@@ -82,15 +85,25 @@ public class PushableObject : MonoBehaviour
     void FixedUpdate()
     {
         smallBlockTimer = Mathf.Max(0f, smallBlockTimer - Time.fixedDeltaTime);
+        settleTimer = Mathf.Max(0f, settleTimer - Time.fixedDeltaTime);
         RefreshSmallBlockFromTouching();
 
-        bool playerDriving =
+        bool touchingBigPlayer =
             player != null && player.IsBigForm && playerCollider != null && IsTouchingPlayer();
+        bool playerPushing = touchingBigPlayer && player.HasBigPushInput;
 
-        if (playerDriving)
+        if (touchingBigPlayer)
         {
-            ReleaseForBigPlayer();
-            ApplyMaterial(pushedMaterial);
+            // Unlock small-form freeze without resetting settle every frame —
+            // otherwise releasing input while still near the ball never coasts.
+            smallBlockTimer = 0f;
+            if (rb.bodyType != RigidbodyType2D.Dynamic)
+            {
+                rb.bodyType = RigidbodyType2D.Dynamic;
+            }
+
+            rb.constraints = RigidbodyConstraints2D.None;
+            ApplyMaterial(playerPushing ? pushedMaterial : ballMaterial);
         }
         else
         {
@@ -117,18 +130,25 @@ public class PushableObject : MonoBehaviour
 
         rb.constraints = RigidbodyConstraints2D.None;
 
+        // Only accelerate while the big player is actively pressing a direction.
+        // Standing next to the ball (or releasing input) must not drag/kill momentum.
+        if (playerPushing)
+        {
+            ApplyBigPlayerPush();
+            settleTimer = settleDelay;
+        }
+
         if (grounded)
         {
             ApplyRollingCoupling();
         }
 
-        if (playerDriving)
-        {
-            ApplyBigPlayerPush();
-        }
-
         bool horizontallyAtRest =
-            !playerDriving && Mathf.Abs(rb.linearVelocity.x) < stopSpeedThreshold;
+            !playerPushing &&
+            !touchingBigPlayer &&
+            settleTimer <= 0f &&
+            Mathf.Abs(rb.linearVelocity.x) < stopSpeedThreshold &&
+            Mathf.Abs(rb.angularVelocity) < 12f;
 
         if (horizontallyAtRest && onFlatGround)
         {
@@ -163,30 +183,37 @@ public class PushableObject : MonoBehaviour
             return;
         }
 
-        float targetAngular = (rb.linearVelocity.x / radius) * Mathf.Rad2Deg;
+        float targetAngular = -(rb.linearVelocity.x / radius) * Mathf.Rad2Deg;
         rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, targetAngular, rollingCoupling);
     }
 
     private void ApplyBigPlayerPush()
     {
-        if (player == null)
+        if (player == null || !player.HasBigPushInput)
         {
             return;
         }
 
-        // Use input intent, not measured velocity: collision resolution can pin
-        // the player against a frozen ball and drive HorizontalVelocity to ~0.
-        float targetVx = player.HasBigPushInput
-            ? player.BigPushTargetVelocity
-            : player.HorizontalVelocity;
-
+        // Match input intent only while accelerating into the ball.
+        // Never pull the ball down to the player's decaying idle speed.
+        float targetVx = player.BigPushTargetVelocity;
         if (Mathf.Abs(targetVx) < 0.05f)
         {
             return;
         }
 
+        float currentVx = rb.linearVelocity.x;
+        bool alreadyMovingSameWay =
+            Mathf.Sign(currentVx) == Mathf.Sign(targetVx) &&
+            Mathf.Abs(currentVx) >= Mathf.Abs(targetVx) - 0.05f;
+
+        if (alreadyMovingSameWay)
+        {
+            return;
+        }
+
         float newVx = Mathf.MoveTowards(
-            rb.linearVelocity.x,
+            currentVx,
             targetVx,
             bigPlayerPushAccel * Time.fixedDeltaTime);
         rb.linearVelocity = new Vector2(newVx, rb.linearVelocity.y);
@@ -335,6 +362,7 @@ public class PushableObject : MonoBehaviour
     public void ReleaseForBigPlayer()
     {
         smallBlockTimer = 0f;
+        settleTimer = settleDelay;
 
         if (rb.bodyType != RigidbodyType2D.Dynamic)
         {

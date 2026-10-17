@@ -78564,6 +78564,7 @@ MonoBehaviour:
     m_Bits: 8
   fastFallSpeed: 16
   fastFallAcceleration: 70
+  fastFallDeadzone: 0.45
   coyoteTime: 0.12
   jumpBufferTime: 0.12
   smallScale: {x: 1, y: 1, z: 1}
@@ -80030,7 +80031,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: -0.09379214, y: 0}
-  m_Radius: 9.400571
+  m_Radius: 9.35
 --- !u!50 &1667154220
 Rigidbody2D:
   serializedVersion: 5
@@ -80094,6 +80095,7 @@ MonoBehaviour:
   minGroundNormalY: 0.45
   flatGroundNormalY: 0.92
   stopSpeedThreshold: 0.12
+  settleDelay: 0.45
   rollingCoupling: 0.85
   pushedFriction: 0.12
   bigPlayerPushAccel: 42

@@ -40,10 +40,12 @@ public class PlayerController : MonoBehaviour
     private float fallSpeed;
 
     [Header("Asagi Hizli Dusus")]
-    [Tooltip("S tusuna havadayken basildiginda hedeflenen asagi hiz.")]
+    [Tooltip("Asagi basildiginda hedeflenen dusus hizi.")]
     [SerializeField, Min(0.1f)] private float fastFallSpeed = 16f;
     [Tooltip("Oyuncunun asagi hiza ne kadar cabuk ulasacagi.")]
     [SerializeField, Min(0.1f)] private float fastFallAcceleration = 70f;
+    [Tooltip("Joystick sapmasinda ziplamayi oldurmemek icin fast fall deadzone'u Move'dan daha genis tutulur.")]
+    [SerializeField, Range(0.05f, 0.9f)] private float fastFallDeadzone = 0.45f;
 
     [Header("Coyote Time / Jump Buffer")]
     [Tooltip("How long jumping remains allowed after walking off a ledge.")]
@@ -280,11 +282,13 @@ public class PlayerController : MonoBehaviour
         }
 
         float newVelocityY = rb.linearVelocity.y;
-        if (verticalInput < -InputDeadzone && !isGrounded && newVelocityY > -fastFallSpeed)
+        // Joystick often sits slightly downward while jumping. Never cancel
+        // upward momentum — only speed up once already falling past the apex.
+        if (verticalInput < -fastFallDeadzone &&
+            !isGrounded &&
+            newVelocityY <= 0f &&
+            newVelocityY > -fastFallSpeed)
         {
-            // Pressing down cancels upward momentum immediately, then starts a
-            // controlled fast fall without slowing an already faster descent.
-            newVelocityY = Mathf.Min(newVelocityY, 0f);
             newVelocityY = Mathf.MoveTowards(
                 newVelocityY,
                 -fastFallSpeed,
@@ -364,8 +368,14 @@ public class PlayerController : MonoBehaviour
             wallCheckDistance,
             groundLayer);
 
-        // Floor/ceiling contacts have a mostly vertical normal; ignore those.
-        return hit.collider != null && Mathf.Abs(hit.normal.x) > 0.7f;
+        if (hit.collider == null || Mathf.Abs(hit.normal.x) <= 0.7f)
+        {
+            return false;
+        }
+
+        // Pushables live on the Ground layer; do not treat them as walls or the
+        // big form cannot accelerate into the boulder to roll it.
+        return !hit.collider.CompareTag("Pushable");
     }
 
     public void OnMove(InputValue value)

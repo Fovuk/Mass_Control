@@ -80,7 +80,12 @@ public static class DayAtmosphereController
 
         if (createDecorativeOverlays && Application.isPlaying)
         {
-            AddLocalHighlights(scene);
+            // Point Light2Ds are expensive on mobile URP; keep them on desktop only.
+            bool allowExtraLights = !IsMobileRuntime();
+            if (allowExtraLights)
+            {
+                AddLocalHighlights(scene);
+            }
 
             Camera mainCamera = Camera.main;
             if (mainCamera != null && mainCamera.gameObject.scene == scene)
@@ -93,7 +98,10 @@ public static class DayAtmosphereController
                         new Color(0.28f, 0.68f, 0.95f, 0.10f),
                         new Color(0.84f, 0.94f, 1f, 0.22f),
                         -4);
-                    CreateSunShaftLights(scene, level);
+                    if (allowExtraLights)
+                    {
+                        CreateSunShaftLights(scene, level);
+                    }
                 }
                 else if (level >= 5)
                 {
@@ -326,5 +334,10 @@ public static class DayAtmosphereController
         return ColorUtility.TryParseHtmlString(value, out Color color)
             ? color
             : Color.white;
+    }
+
+    private static bool IsMobileRuntime()
+    {
+        return Application.isMobilePlatform;
     }
 }

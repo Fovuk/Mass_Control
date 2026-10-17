@@ -188,6 +188,12 @@ public static class LevelEnvironmentDecorator
 
     private static void AddLampGlow(Transform lamp, float localY)
     {
+        // Extra Point Light2Ds are costly on mobile URP 2D.
+        if (Application.isMobilePlatform)
+        {
+            return;
+        }
+
         var glowObject = new GameObject("Lamp Glow");
         glowObject.transform.SetParent(lamp, false);
         glowObject.transform.localPosition = new Vector3(0f, localY, 0f);
